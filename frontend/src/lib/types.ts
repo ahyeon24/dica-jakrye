@@ -63,3 +63,32 @@ export type Page<T> = {
   items: T[];
   nextCursor: string | null;
 };
+
+export type PhotoDetail = {
+  id: number;
+  source: "UPLOAD" | "COMMONS";
+  displayUrl: string;
+  thumbnailUrl: string;
+  width: number | null;
+  height: number | null;
+  isOriginalSize: boolean | null;
+  camera: { slug: string; name: string; nameKo: string | null; brandName: string } | null;
+  exif: {
+    takenAt: string | null;
+    flashFired: boolean | null;
+    fNumber: number | null;
+    exposureTime: string | null;
+    iso: number | null;
+    focalLength: number | null;
+  };
+  uploader: { nickname: string; profileImageUrl: string | null } | null;
+  commons: {
+    author: string;
+    licenseName: string;
+    licenseUrl: string | null;
+    pageUrl: string;
+    modified: boolean;
+  } | null;
+  createdAt: string;
+  isMine: boolean;
+};

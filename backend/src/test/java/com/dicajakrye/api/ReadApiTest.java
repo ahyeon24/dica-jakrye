@@ -201,6 +201,65 @@ class ReadApiTest {
     // ---------- 테스트 데이터 ----------
 
     /** Commons 작례 n장. i번째: 1분 간격, i%3==0이면 플래시, 짝수면 원본 크기 */
+    @Nested
+    class 작례_상세 {
+
+        @Test
+        void Commons_작례는_출처_표시_정보와_촬영_정보를_준다() {
+            insertCommonsPhotos("canon-ixus-30", 1);
+            long id = jdbc.sql("SELECT id FROM photo ORDER BY id DESC LIMIT 1").query(Long.class).single();
+            jdbc.sql("""
+                    UPDATE photo SET taken_at = '2007-05-03 18:22:10', f_number = 2.8, exposure_time = '1/60',
+                                     iso = 100, focal_length = 5.4
+                     WHERE id = :id
+                    """).param("id", id).update();
+
+            MvcTestResult r = mvc.get().uri("/api/photos/{id}", id).exchange();
+            assertThat(r).hasStatusOk();
+            assertThat(r).bodyJson().extractingPath("$.source").isEqualTo("COMMONS");
+            assertThat(r).bodyJson().extractingPath("$.displayUrl").asString().endsWith("/display/d1.jpg");
+            assertThat(r).bodyJson().extractingPath("$.camera.slug").isEqualTo("canon-ixus-30");
+            assertThat(r).bodyJson().extractingPath("$.camera.brandName").isEqualTo("Canon");
+            assertThat(r).bodyJson().extractingPath("$.exif.takenAt").isEqualTo("2007-05-03T18:22:10");
+            assertThat(r).bodyJson().extractingPath("$.exif.exposureTime").isEqualTo("1/60");
+            assertThat(r).bodyJson().extractingPath("$.exif.iso").isEqualTo(100);
+            assertThat(r).bodyJson().extractingPath("$.uploader").isNull();
+            assertThat(r).bodyJson().extractingPath("$.commons.author").isEqualTo("작가 1");
+            assertThat(r).bodyJson().extractingPath("$.commons.licenseName").isEqualTo("CC BY-SA 4.0");
+            assertThat(r).bodyJson().extractingPath("$.commons.modified").isEqualTo(true);
+            assertThat(r).bodyJson().extractingPath("$.isMine").isEqualTo(false);
+        }
+
+        @Test
+        void 삭제된_작례와_없는_작례는_404_PHOTO_NOT_FOUND() {
+            insertCommonsPhotos("canon-ixus-30", 1);
+            long id = jdbc.sql("SELECT id FROM photo ORDER BY id DESC LIMIT 1").query(Long.class).single();
+            jdbc.sql("UPDATE photo SET deleted_at = now() WHERE id = :id").param("id", id).update();
+
+            assertThat(mvc.get().uri("/api/photos/{id}", id).exchange()).bodyJson()
+                    .extractingPath("$.code").isEqualTo("PHOTO_NOT_FOUND");
+            assertThat(mvc.get().uri("/api/photos/999999999").exchange()).hasStatus(404);
+            assertThat(mvc.post().uri("/api/photos/{id}/views", id).exchange()).hasStatus(404);
+        }
+
+        @Test
+        void 조회수가_오른다() {
+            insertCommonsPhotos("canon-ixus-30", 1);
+            long id = jdbc.sql("SELECT id FROM photo ORDER BY id DESC LIMIT 1").query(Long.class).single();
+
+            assertThat(mvc.post().uri("/api/photos/{id}/views", id).exchange()).hasStatus(204);
+            assertThat(mvc.post().uri("/api/photos/{id}/views", id).exchange()).hasStatus(204);
+            int views = jdbc.sql("SELECT view_count FROM photo WHERE id = :id").param("id", id)
+                    .query(Integer.class).single();
+            assertThat(views).isEqualTo(2);
+        }
+
+        @Test
+        void 숫자가_아닌_id는_400() {
+            assertThat(mvc.get().uri("/api/photos/abc").exchange()).hasStatus(400);
+        }
+    }
+
     private void insertCommonsPhotos(String cameraSlug, int n) {
         long cameraId = jdbc.sql("SELECT id FROM camera WHERE slug = :s").param("s", cameraSlug).query(Long.class).single();
         Instant base = Instant.parse("2026-11-01T00:00:00Z");

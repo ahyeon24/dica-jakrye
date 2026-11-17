@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import type { Page, PhotoSummary } from "@/lib/types";
 import { Thumb } from "./Thumb";
@@ -55,10 +56,10 @@ export function PhotoGrid({
       <ul className="grid grid-cols-3 gap-0.5 md:grid-cols-4 lg:grid-cols-6">
         {items.map((p) => (
           <li key={p.id} className="relative">
-            {/* 작례 상세 화면은 상세 API를 만든 뒤 연결 */}
-            <Thumb src={p.thumbnailUrl} alt={p.credit ? `${p.credit}의 작례` : "작례"} className="aspect-square w-full" />
+            <Link href={`/photos/${p.id}`} className="block">
+              <Thumb src={p.thumbnailUrl} alt={p.credit ? `${p.credit}의 작례` : "작례"} className="aspect-square w-full" />
+            </Link>
             <div className="pointer-events-none absolute bottom-1 left-1 flex gap-0.5">
-              {p.source === "COMMONS" && <Badge>Commons</Badge>}
               {p.isOriginalSize === false && <Badge>줄인 사진</Badge>}
             </div>
           </li>

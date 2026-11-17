@@ -27,6 +27,11 @@ management:
       exposure:
         include: health
 
+app:
+  image:
+    # 공개 이미지 주소 앞부분. 운영은 https://img.{도메인} (R2 공개 버킷)
+    base-url: ${IMAGE_BASE_URL:http://localhost:8080/dev-images}
+
 ---
 # 로컬 개발: docker compose 의 PostgreSQL (5433)
 spring:

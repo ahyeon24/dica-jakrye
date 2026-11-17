@@ -223,6 +223,7 @@ GET /api/cameras/canon-ixus-30/photos?size=24&cursor=eyJ0Ijo...
     {
       "slug": "canon-ixus-30",
       "name": "IXUS 30",
+      "nameKo": "익서스 30",
       "releaseYear": 2003,
       "photoCount": 52,
       "coverThumbnailUrl": "…"
@@ -247,6 +248,7 @@ GET /api/cameras/canon-ixus-30/photos?size=24&cursor=eyJ0Ijo...
     {
       "slug": "canon-ixus-30",
       "name": "IXUS 30",
+      "nameKo": "익서스 30",
       "brandName": "Canon",
       "matchedAlias": "익서스 30",
       "photoCount": 52,
@@ -256,6 +258,10 @@ GET /api/cameras/canon-ixus-30/photos?size=24&cursor=eyJ0Ijo...
 }
 ```
 
+- 기종 대표 이름·한글 이름·별칭을 같은 정규화 규칙(ERD.md 4장)으로 비교한다. 띄어쓰기·하이픈·대소문자는 무시한다. ("sd 200" → PowerShot SD200)
+- 정렬: 정확히 일치 > 앞부분 일치 > 포함, 같으면 작례 많은 순
+- 브랜드 이름(영문·한글)과 정확히 같으면 그 브랜드 기종을 모두 보여준다. ("캐논" → 캐논 기종 전부)
+- `%`, `_` 같은 문자는 글자 그대로 검색한다.
 - 기종 대표 이름과 별칭을 함께 검색한다. `matchedAlias`는 어떤 별칭으로 걸렸는지 보여주는 용도 (대표 이름으로 걸렸으면 null)
 - 결과가 없으면 빈 배열
 
@@ -265,6 +271,7 @@ GET /api/cameras/canon-ixus-30/photos?size=24&cursor=eyJ0Ijo...
 {
   "slug": "canon-ixus-30",
   "name": "IXUS 30",
+  "nameKo": "익서스 30",
   "brand": { "slug": "canon", "name": "Canon" },
   "releaseYear": 2003,
   "sensorType": "CCD",
@@ -309,7 +316,7 @@ GET /api/cameras/canon-ixus-30/photos?size=24&cursor=eyJ0Ijo...
   "thumbnailUrl": "https://img.{도메인}/thumbs/…jpg",
   "width": 2048,
   "height": 1536,
-  "camera": { "slug": "canon-ixus-30", "name": "IXUS 30", "brandName": "Canon" },
+  "camera": { "slug": "canon-ixus-30", "name": "IXUS 30", "nameKo": "익서스 30", "brandName": "Canon" },
   "exif": {
     "takenAt": "2026-10-03T18:22:10",
     "flashFired": true,
@@ -373,7 +380,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 ```json
 {
   "matched": true,
-  "camera": { "slug": "canon-ixus-30", "name": "IXUS 30", "brandName": "Canon" }
+  "camera": { "slug": "canon-ixus-30", "name": "IXUS 30", "nameKo": "익서스 30", "brandName": "Canon" }
 }
 ```
 
@@ -460,7 +467,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
   "height": 1536,
   "flashFired": true,
   "isOriginalSize": true,
-  "camera": { "slug": "canon-ixus-30", "name": "IXUS 30" },
+  "camera": { "slug": "canon-ixus-30", "name": "IXUS 30", "nameKo": "익서스 30" },
   "credit": "디카러버"
 }
 ```

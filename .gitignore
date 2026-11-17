@@ -1,0 +1,14 @@
+# 비밀 정보
+.env
+.env.*
+!.env.example
+application-local.yml
+
+# OS / 에디터
+.DS_Store
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc

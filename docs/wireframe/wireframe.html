@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>디카 작례 와이어프레임</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm; }
+  :root {
+    --ink: #222; --mute: #777; --line: #bbb; --box: #e6e6e6; --box2: #d4d4d4;
+    --note: #d9480f; --bg: #fafafa; --accent: #444;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "Apple SD Gothic Neo", "Pretendard", sans-serif; font-size: 12px; line-height: 1.45; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--mute); margin: 0 0 20px; }
+  h2 { font-size: 16px; margin: 0 0 10px; padding-top: 6px; border-top: 2px solid var(--ink); }
+  .section { margin-bottom: 28px; break-inside: avoid; page-break-inside: avoid; }
+  .row { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+  .wrap { width: 300px; }
+  .label { font-weight: 700; margin-bottom: 6px; }
+  .label small { font-weight: 400; color: var(--mute); }
+
+  /* phone frame */
+  .phone { width: 300px; border: 2px solid var(--ink); border-radius: 18px; background: #fff; overflow: hidden; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px;
+    border-bottom: 1px solid var(--line); font-weight: 700; }
+  .bar .icons { display: flex; gap: 8px; font-weight: 400; color: var(--mute); }
+  .body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .foot { border-top: 1px solid var(--line); padding: 8px 12px; color: var(--mute); font-size: 9.5px; line-height: 1.4; }
+
+  .input { border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; color: var(--mute); }
+  .btn { border: 1.5px solid var(--ink); border-radius: 8px; padding: 8px; text-align: center; font-weight: 700; background: #fff; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.ghost { border-color: var(--line); color: var(--mute); font-weight: 400; }
+  .btn.danger { border-color: #c92a2a; color: #c92a2a; }
+  .h { font-weight: 700; font-size: 13px; }
+  .muted { color: var(--mute); }
+  .tiny { font-size: 10px; color: var(--mute); }
+  .img { background: var(--box); border-radius: 4px; position: relative; }
+  .img::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top right, transparent calc(50% - .5px), var(--box2) 50%, transparent calc(50% + .5px)),
+                linear-gradient(to top left, transparent calc(50% - .5px), var(--box2) 50%, transparent calc(50% + .5px)); }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .grid3 .img { aspect-ratio: 1; border-radius: 0; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .card .img { aspect-ratio: 4/3; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1.5px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+  .chip.on { border-color: var(--ink); font-weight: 700; }
+  .rank { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
+  .rank .n { width: 16px; font-weight: 700; text-align: center; }
+  .rank .img { width: 36px; height: 36px; flex: none; }
+  .rank .up { margin-left: auto; color: var(--mute); }
+  .kv { display: grid; grid-template-columns: 70px 1fr; gap: 3px 8px; }
+  .kv div:nth-child(odd) { color: var(--mute); }
+  .box { border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+  .box.ok { border-color: #2b8a3e; }
+  .box.warn { border-color: #e67700; }
+  .box.err { border-color: #c92a2a; }
+  .check { display: flex; gap: 6px; align-items: flex-start; }
+  .check::before { content: ""; width: 12px; height: 12px; border: 1.5px solid var(--ink); border-radius: 3px; flex: none; margin-top: 1px; }
+  .radio { display: flex; gap: 6px; align-items: center; }
+  .radio::before { content: ""; width: 11px; height: 11px; border: 1.5px solid var(--ink); border-radius: 50%; flex: none; }
+  .badge { position: absolute; left: 3px; bottom: 3px; background: #fff; border: 1px solid var(--ink); font-size: 8.5px; padding: 0 3px; z-index: 1; }
+  .avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--box); flex: none; }
+  .dim { background: rgba(0,0,0,.25); padding: 60px 14px 14px; }
+  .sheet { background: #fff; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* annotations */
+  .n-tag { display: inline-block; background: var(--note); color: #fff; border-radius: 50%; width: 15px; height: 15px;
+    font-size: 9.5px; line-height: 15px; text-align: center; font-weight: 700; vertical-align: middle; margin-right: 3px; }
+  .notes { margin-top: 8px; padding-left: 0; list-style: none; color: #444; font-size: 11px; }
+  .notes li { margin: 3px 0; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; color: var(--mute); margin-bottom: 18px; }
+
+  @media print {
+    body { padding: 0; background: #fff; zoom: 0.72; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section { break-inside: auto; page-break-inside: auto; margin-bottom: 0; }
+    .section + .section { break-before: page; page-break-before: always; }
+    .wrap { break-inside: avoid; page-break-inside: avoid; }
+    .sub, .legend { margin-bottom: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>빈티지 디카 작례 사이트 — 와이어프레임</h1>
+<p class="sub">저해상도 와이어프레임 · 모바일 기준 (사용자 유입이 인스타 중심) · 작성일 2026-11-16 · 관련 문서: PRD.md, API.md</p>
+<div class="legend">
+  <span><span class="n-tag">1</span> 화면 아래 설명 번호</span>
+  <span>회색 X 박스 = 사진</span>
+  <span>반응형 웹 하나로 만듦 (휴대폰 먼저). 데스크톱은 격자 3칸 → 6칸, 상세는 사진·정보 좌우 배치, 창은 가운데 팝업 (ARCHITECTURE.md 2.1)</span>
+</div>
+
+<!-- ============ 1. 홈 ============ -->
+<div class="section">
+<h2>1. 홈</h2>
+<div class="row">
+  <div class="wrap">
+    <div class="label">홈 <small>/</small></div>
+    <div class="phone">
+      <div class="bar">디카작례 <span class="icons"><span>올리기</span><span>로그인</span></span></div>
+      <div class="body">
+        <div class="input"><span class="n-tag">1</span>기종 검색 (예: 익서스, IXY, 케녹스)</div>
+        <div class="h"><span class="n-tag">3</span>브랜드</div>
+        <div class="chips">
+          <span class="chip">Canon 캐논</span><span class="chip">Sony 소니</span><span class="chip">Samsung 삼성</span>
+          <span class="chip">Nikon 니콘</span><span class="chip">Fujifilm 후지</span><span class="chip">Olympus 올림푸스</span>
+          <span class="chip">Casio 카시오</span><span class="chip">Pentax 펜탁스</span>
+        </div>
+        <div class="h"><span class="n-tag">2</span>최근 올라온 작례</div>
+        <div class="grid3">
+          <div class="img"></div><div class="img"></div><div class="img"></div>
+          <div class="img"></div><div class="img"></div><div class="img"></div>
+        </div>
+        <div class="btn ghost">더 보기</div>
+      </div>
+      <div class="foot"><span class="n-tag">4</span>개인정보처리방침 · 이용약관<br>일부 작례는 Wikimedia Commons의 자유 라이선스 사진입니다.</div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>입력하면 아래로 결과 목록이 뜸 (오른쪽 화면)</li>
+      <li><span class="n-tag">2</span>사용자가 올린 작례 최신순. 업로드가 적은 출시 직후엔 숨기거나 있는 만큼만. ("요즘 뜨는 디카" 순위는 추후 기능으로 뺌)</li>
+      <li><span class="n-tag">3</span>누르면 브랜드 페이지</li>
+      <li><span class="n-tag">4</span>모든 페이지 공통 푸터</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">검색 결과 <small>홈 위에 드롭다운</small></div>
+    <div class="phone">
+      <div class="bar">디카작례 <span class="icons"><span>올리기</span><span>로그인</span></span></div>
+      <div class="body">
+        <div class="input" style="color:var(--ink)">익서스|</div>
+        <div class="box" style="display:flex;flex-direction:column;gap:6px">
+          <div class="rank" style="border:0"><div class="img"></div><div>IXUS 30 · 익서스 30<div class="tiny"><span class="n-tag">1</span>"익서스"로 찾음 · 작례 52장</div></div></div>
+          <div class="rank" style="border:0"><div class="img"></div><div>IXUS 40 · 익서스 40<div class="tiny">"익서스"로 찾음 · 작례 31장</div></div></div>
+          <div class="rank" style="border:0"><div class="img"></div><div>IXUS 55 · 익서스 55<div class="tiny">"익서스"로 찾음 · 작례 12장</div></div></div>
+        </div>
+        <div class="box tiny"><span class="n-tag">2</span>결과가 없을 때: "아직 등록되지 않은 기종이에요. 작례를 올리면 확인 후 추가돼요"</div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>별칭으로 걸렸으면 어떤 별칭인지 보여줌. 누르면 기종 페이지</li>
+      <li><span class="n-tag">2</span>빈 결과에서 업로드로 유도</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">로그인 <small>올리기·로그인 누르면 뜨는 창</small></div>
+    <div class="phone">
+      <div class="dim">
+        <div class="sheet">
+          <div class="h">로그인</div>
+          <div class="muted">작례를 올리고 신고하려면 로그인이 필요해요.</div>
+          <div class="btn">G 구글로 계속하기</div>
+          <div class="btn" style="background:#fee500;border-color:#fee500">카카오로 계속하기</div>
+          <div class="tiny"><span class="n-tag">1</span>처음이면 가입 화면으로 이어져요</div>
+        </div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>기존 회원은 원래 보던 페이지로 돌아감</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ============ 2. 브랜드 / 기종 ============ -->
+<div class="section">
+<h2>2. 브랜드 · 기종</h2>
+<div class="row">
+  <div class="wrap">
+    <div class="label">브랜드 페이지 <small>/brands/canon</small></div>
+    <div class="phone">
+      <div class="bar">← Canon 캐논 <span class="icons"><span>검색</span></span></div>
+      <div class="body">
+        <div class="tiny">기종 8개</div>
+        <div class="grid2">
+          <div class="card"><div class="img"></div><div class="h" style="font-size:12px">IXUS 30</div><div class="tiny">2004 · 작례 52장</div></div>
+          <div class="card"><div class="img"></div><div class="h" style="font-size:12px">IXUS 40</div><div class="tiny">2004 · 작례 31장</div></div>
+          <div class="card"><div class="img"></div><div class="h" style="font-size:12px">IXUS 55</div><div class="tiny">2005 · 작례 12장</div></div>
+          <div class="card"><div class="img"></div><div class="h" style="font-size:12px">PowerShot A75</div><div class="tiny">2004 · 작례 20장</div></div>
+        </div>
+        <div class="tiny"><span class="n-tag">1</span>정렬: 작례 많은 순</div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>기종이 적어서(MVP 30개) 페이지 나눔 없이 전부 보여줌</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">기종 페이지 <small>/cameras/canon-ixus-30</small></div>
+    <div class="phone">
+      <div class="bar">← <span class="icons"><span>검색</span><span>올리기</span></span></div>
+      <div class="body">
+        <div>
+          <div class="tiny">Canon</div>
+          <div class="h" style="font-size:16px">IXUS 30</div>
+          <div class="tiny">2004 · CCD · 작례 52장</div>
+          <div class="tiny"><span class="n-tag">1</span>다른 이름: 익서스 30, PowerShot SD200</div>
+        </div>
+        <div class="chips"><span class="n-tag">2</span><span class="chip on">전체 52</span><span class="chip">플래시 O 18</span><span class="chip">플래시 X 29</span></div>
+        <div class="check"><span><span class="n-tag">4</span>원본 크기만 보기 <span class="tiny">(31장)</span></span></div>
+        <div class="grid3">
+          <div class="img"></div><div class="img"></div><div class="img"></div>
+          <div class="img"><span class="badge">Commons</span></div><div class="img"></div><div class="img"></div>
+          <div class="img"></div><div class="img"><span class="badge">Commons</span></div><div class="img"></div>
+        </div>
+        <div class="tiny" style="text-align:center"><span class="n-tag">3</span>스크롤하면 24장씩 더 불러옴</div>
+      </div>
+      <div class="foot">개인정보처리방침 · 이용약관 · Commons 사진 안내</div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>나라별 이름을 보여줘서 같은 기종인 걸 알 수 있게</li>
+      <li><span class="n-tag">2</span>플래시 정보 없는 작례는 O/X 필터에서 빠짐 (전체 52 ≠ 18+29)</li>
+      <li><span class="n-tag">3</span>24장씩. 3·4·6칸 격자로 모두 나누어떨어짐</li>
+      <li><span class="n-tag">4</span>기본은 줄인 사진까지 전부. 켜면 카메라 원래 해상도 그대로인 사진만. 플래시 필터와 같이 쓸 수 있음. 기종 해상도를 모르면 숨김</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">기종 페이지 — 작례 없을 때</div>
+    <div class="phone">
+      <div class="bar">← <span class="icons"><span>검색</span><span>올리기</span></span></div>
+      <div class="body">
+        <div>
+          <div class="tiny">Samsung</div>
+          <div class="h" style="font-size:16px">Kenox S630</div>
+          <div class="tiny">2007 · CCD · 작례 0장</div>
+        </div>
+        <div class="box" style="text-align:center;padding:24px 10px">
+          <div class="h">아직 작례가 없어요</div>
+          <div class="muted" style="margin:6px 0 10px">이 카메라로 찍은 원본 사진이 있다면<br>첫 작례를 올려주세요</div>
+          <div class="btn primary">작례 올리기</div>
+        </div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li>콜드 스타트 대비. 빈 화면 대신 업로드 유도</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ============ 3. 작례 상세 ============ -->
+<div class="section">
+<h2>3. 작례 상세</h2>
+<div class="row">
+  <div class="wrap">
+    <div class="label">사용자 업로드 작례 <small>/photos/1043</small></div>
+    <div class="phone">
+      <div class="bar">← <span class="icons"><span>⋯</span></span></div>
+      <div class="img" style="aspect-ratio:4/3;border-radius:0"></div>
+      <div class="body">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="avatar" style="width:28px;height:28px"></div>
+          <div><span class="n-tag">1</span><b>디카러버</b><div class="tiny">2026.11.14 올림</div></div>
+        </div>
+        <div class="btn"><span class="n-tag">2</span>IXUS 30 작례 더 보기 →</div>
+        <div class="box">
+          <div class="h" style="margin-bottom:4px">촬영 정보</div>
+          <div class="kv">
+            <div>촬영일</div><div>2026.10.03 18:22</div>
+            <div>플래시</div><div>사용</div>
+            <div>조리개</div><div>f/2.8</div>
+            <div>셔터</div><div>1/60초</div>
+            <div>ISO</div><div>100</div>
+            <div>초점거리</div><div>5.4mm</div>
+          </div>
+        </div>
+        <div class="tiny"><span class="n-tag">3</span>⋯ 메뉴: 신고하기 (내 작례면: 삭제하기)</div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>누르면 그 사람 프로필</li>
+      <li><span class="n-tag">2</span>구매 고민하는 사람을 기종 페이지로 다시 보냄</li>
+      <li><span class="n-tag">3</span>EXIF에 없는 항목은 줄째로 숨김</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">Commons 작례 <small>Wikimedia Commons에서 가져온 사진</small></div>
+    <div class="phone">
+      <div class="bar">← <span class="icons"><span>⋯</span></span></div>
+      <div class="img" style="aspect-ratio:4/3;border-radius:0"></div>
+      <div class="body">
+        <div class="box">
+          <div><span class="n-tag">1</span>사진: <b>John Doe</b> · <u>CC BY-SA 4.0</u></div>
+          <div class="tiny" style="margin-top:4px">Wikimedia Commons의 자유 라이선스 사진이에요 · 크기 조정됨</div>
+          <div class="btn ghost" style="margin-top:6px">Commons 원본 페이지 ↗</div>
+        </div>
+        <div class="btn">IXUS 30 작례 더 보기 →</div>
+        <div class="box">
+          <div class="h" style="margin-bottom:4px">촬영 정보</div>
+          <div class="kv"><div>촬영일</div><div>2006.07.21 14:03</div><div>플래시</div><div>미사용</div></div>
+        </div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>작가·라이선스(링크)·원본 페이지 링크·크기 조정 표시는 라이선스상 필수. 원본 페이지 링크는 새 탭으로 열림</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">신고하기 <small>⋯ → 신고하기</small></div>
+    <div class="phone">
+      <div class="dim">
+        <div class="sheet">
+          <div class="h">이 작례를 신고할까요?</div>
+          <div class="radio">부적절한 사진</div>
+          <div class="radio">내가 찍은 사진을 도용함</div>
+          <div class="radio">나(또는 아는 사람)가 동의 없이 나옴</div>
+          <div class="radio">이 기종으로 찍은 사진이 아님</div>
+          <div class="radio">기타</div>
+          <div class="input" style="height:54px">자세한 내용 (기타는 필수)</div>
+          <div class="btn primary">신고하기</div>
+          <div class="tiny"><span class="n-tag">1</span>이미 신고했으면 "이미 신고한 작례예요"</div>
+        </div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>본인 작례에는 신고 메뉴가 안 보임</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ============ 4. 업로드 ============ -->
+<div class="section">
+<h2>4. 작례 올리기 <span class="muted" style="font-weight:400;font-size:12px">/upload · 로그인 필요</span></h2>
+<div class="row">
+  <div class="wrap">
+    <div class="label">① 파일 고르기</div>
+    <div class="phone">
+      <div class="bar">← 작례 올리기 <span></span></div>
+      <div class="body">
+        <div class="box" style="text-align:center;padding:40px 10px;border-style:dashed">
+          <div class="h">사진 고르기</div>
+          <div class="tiny" style="margin-top:6px">JPEG · 최대 20MB</div>
+        </div>
+        <div class="box tiny"><span class="n-tag">1</span><b style="color:var(--ink)">카메라에서 옮긴 원본 파일</b>을 올려주세요. 인스타·카톡으로 받은 파일은 촬영 정보가 지워져 있어서 올릴 수 없어요.</div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>EXIF가 왜 필요한지 미리 안내</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">② 기종 확인 + 동의</div>
+    <div class="phone">
+      <div class="bar">← 작례 올리기 <span></span></div>
+      <div class="body">
+        <div class="img" style="aspect-ratio:4/3"></div>
+        <div class="box ok"><span class="n-tag">1</span><b>IXUS 30</b>으로 찍은 사진이에요<div class="tiny">촬영 정보: Canon DIGITAL IXUS 30</div></div>
+        <div class="tiny">위치 정보(GPS)는 지우고 저장해요.</div>
+        <div class="check"><span><span class="n-tag">2</span>직접 찍은 사진이에요. 사람이 나온 사진은 당사자 동의를 받았어요.</span></div>
+        <div class="btn primary">올리기</div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>브라우저에서 EXIF를 읽어 바로 보여줌 (최종 판단은 서버)</li>
+      <li><span class="n-tag">2</span>체크해야 올리기 버튼이 켜짐</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">② 다른 경우</div>
+    <div class="phone">
+      <div class="bar">← 작례 올리기 <span></span></div>
+      <div class="body">
+        <div class="tiny">등록 안 된 기종일 때</div>
+        <div class="box warn"><span class="n-tag">1</span><b>아직 등록되지 않은 기종이에요</b><div class="tiny">촬영 정보: SAMSUNG Digimax V700<br>올리면 내 페이지에 먼저 보이고, 확인 후 기종 페이지에 추가돼요.</div></div>
+        <div class="tiny" style="margin-top:6px">촬영 정보가 없을 때</div>
+        <div class="box err"><b>촬영 정보가 없는 파일이에요</b><div class="tiny">카메라 메모리카드에서 옮긴 원본을 골라주세요.</div></div>
+        <div class="btn ghost">다른 사진 고르기</div>
+        <div class="tiny" style="margin-top:6px">폰 사진일 때</div>
+        <div class="box warn"><span class="n-tag">2</span><b>iPhone 15로 찍은 사진 같아요</b><div class="tiny">빈티지 디카로 찍은 사진만 올려주세요.</div></div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>미분류로 업로드됨</li>
+      <li><span class="n-tag">2</span>막지는 않고 경고만 (올리면 미분류 → 관리자가 정리). 막을지는 운영하며 판단</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ============ 5. 프로필 / 가입 ============ -->
+<div class="section">
+<h2>5. 프로필 · 가입 · 탈퇴</h2>
+<div class="row">
+  <div class="wrap">
+    <div class="label">프로필 (내 페이지) <small>/users/디카러버</small></div>
+    <div class="phone">
+      <div class="bar">← <span class="icons"><span><span class="n-tag">1</span>설정</span></span></div>
+      <div class="body">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="avatar"></div>
+          <div><div class="h">디카러버</div><div class="tiny">작례 37장 · 2026.11 가입</div></div>
+        </div>
+        <div class="btn primary">작례 올리기</div>
+        <div class="grid3">
+          <div class="img"><span class="badge"><span class="n-tag">2</span>기종 확인 중</span></div><div class="img"></div><div class="img"></div>
+          <div class="img"></div><div class="img"></div><div class="img"></div>
+          <div class="img"></div><div class="img"></div><div class="img"></div>
+        </div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>설정·올리기 버튼은 내 페이지에서만 보임. 남의 프로필은 사진 격자만</li>
+      <li><span class="n-tag">2</span>미분류 작례 표시</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">설정 <small>프로필 → 설정</small></div>
+    <div class="phone">
+      <div class="bar">← 설정 <span></span></div>
+      <div class="body">
+        <div class="tiny">닉네임</div>
+        <div class="input" style="color:var(--ink)">디카러버</div>
+        <div class="btn">닉네임 저장</div>
+        <div class="tiny">로그인: 카카오</div>
+        <div class="btn ghost">로그아웃</div>
+        <div class="btn ghost">개인정보처리방침 · 이용약관</div>
+        <div style="height:30px"></div>
+        <div class="btn danger"><span class="n-tag">1</span>회원 탈퇴</div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>누르면 오른쪽 확인 창</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">탈퇴 확인</div>
+    <div class="phone">
+      <div class="dim">
+        <div class="sheet">
+          <div class="h">정말 탈퇴할까요?</div>
+          <div class="box err">올린 작례 <b>37장</b>이 모두 삭제되고 되돌릴 수 없어요.</div>
+          <div class="check">위 내용을 확인했어요</div>
+          <div class="btn danger">탈퇴하기</div>
+          <div class="btn ghost">취소</div>
+        </div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li>체크해야 탈퇴 버튼이 켜짐</li>
+    </ul>
+  </div>
+
+  <div class="wrap">
+    <div class="label">가입 <small>/signup · 처음 로그인했을 때</small></div>
+    <div class="phone">
+      <div class="bar">가입하기 <span></span></div>
+      <div class="body">
+        <div class="tiny">닉네임 <span class="n-tag">1</span></div>
+        <div class="input" style="color:var(--ink)">디카러버</div>
+        <div class="tiny" style="color:#2b8a3e">사용할 수 있는 닉네임이에요</div>
+        <div class="box">
+          <div class="check"><b>모두 동의</b></div>
+          <div style="height:6px"></div>
+          <div class="check">(필수) 이용약관 <span class="muted">보기</span></div>
+          <div class="check">(필수) 개인정보 수집·이용 <span class="muted">보기</span></div>
+        </div>
+        <div class="btn primary">가입 완료</div>
+        <div class="tiny"><span class="n-tag">2</span>동의하기 전에는 회원 정보가 저장되지 않아요</div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><span class="n-tag">1</span>카카오·구글 닉네임을 미리 채움. 2~20자, 한글·영문·숫자·밑줄</li>
+      <li><span class="n-tag">2</span>API.md 2장 로그인 흐름 참고</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ============ 6. 화면 흐름 ============ -->
+<div class="section">
+<h2>6. 화면 흐름</h2>
+<pre style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; background:#fff; border:1px solid var(--line); padding:12px; border-radius:8px; margin:0">
+홈 ──검색──▶ 기종 페이지 ──작례 선택──▶ 작례 상세 ──작가 선택──▶ 프로필
+ │                ▲                         │  └─ ⋯ ▶ 신고하기 / 삭제하기
+ ├──브랜드──▶ 브랜드 페이지                  └─ "작례 더 보기" ▶ 기종 페이지
+ │
+ ├──올리기──▶ (로그인 안 됨) 로그인 ──처음──▶ 가입 ──▶ 작례 올리기
+ │            (로그인 됨)  작례 올리기 ──완료──▶ 작례 상세
+ │
+ └──내 페이지──▶ 프로필 ──설정──▶ 설정 ──▶ 탈퇴 확인
+</pre>
+</div>
+
+</body>
+</html>

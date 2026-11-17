@@ -1,0 +1,820 @@
+[
+  {
+    "id": "canon-ixy-digital-200",
+    "brand": "Canon",
+    "name": "IXY DIGITAL 200",
+    "aliases": [
+      "IXUS 30",
+      "PowerShot SD200",
+      "익서스 30"
+    ],
+    "commons_categories": {
+      "Canon Digital IXUS 30": 3485
+    },
+    "commons_total": 3485,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon DIGITAL IXUS 30": 28,
+      "Canon PowerShot SD200": 22
+    },
+    "native_long_short": [
+      2048,
+      1536
+    ]
+  },
+  {
+    "id": "canon-ixy-digital-30",
+    "brand": "Canon",
+    "name": "IXY DIGITAL 30",
+    "aliases": [
+      "IXUS 40",
+      "PowerShot SD300",
+      "익서스 40"
+    ],
+    "commons_categories": {
+      "Canon Digital IXUS 40": 12712
+    },
+    "commons_total": 12712,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon PowerShot SD300": 30,
+      "Canon DIGITAL IXUS 40": 20
+    },
+    "native_long_short": [
+      2272,
+      1704
+    ]
+  },
+  {
+    "id": "canon-ixy-digital-55",
+    "brand": "Canon",
+    "name": "IXY DIGITAL 55",
+    "aliases": [
+      "IXUS 55",
+      "PowerShot SD450",
+      "익서스 55"
+    ],
+    "commons_categories": {
+      "Canon Digital IXUS 55": 11788
+    },
+    "commons_total": 11788,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon PowerShot SD450": 29,
+      "Canon DIGITAL IXUS 55": 20,
+      "Canon IXY DIGITAL 60": 1
+    },
+    "native_long_short": [
+      2592,
+      1944
+    ]
+  },
+  {
+    "id": "canon-ixy-digital-70",
+    "brand": "Canon",
+    "name": "IXY DIGITAL 70",
+    "aliases": [
+      "IXUS 60",
+      "PowerShot SD600",
+      "익서스 60"
+    ],
+    "commons_categories": {
+      "Canon Digital IXUS 60": 38920
+    },
+    "commons_total": 38920,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon PowerShot SD600": 31,
+      "Canon DIGITAL IXUS 60": 13,
+      "Canon IXY DIGITAL 70": 6
+    },
+    "native_long_short": [
+      2816,
+      2112
+    ]
+  },
+  {
+    "id": "canon-ixy-digital-10",
+    "brand": "Canon",
+    "name": "IXY DIGITAL 10",
+    "aliases": [
+      "IXUS 70",
+      "PowerShot SD1000",
+      "익서스 70"
+    ],
+    "commons_categories": {
+      "Canon Digital IXUS 70": 16992
+    },
+    "commons_total": 16992,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon DIGITAL IXUS 70": 35,
+      "Canon PowerShot SD1000": 14,
+      "Canon IXY DIGITAL 10": 1
+    },
+    "native_long_short": [
+      3072,
+      2304
+    ]
+  },
+  {
+    "id": "canon-ixy-digital-20-is",
+    "brand": "Canon",
+    "name": "IXY DIGITAL 20 IS",
+    "aliases": [
+      "IXUS 75",
+      "PowerShot SD750",
+      "익서스 75"
+    ],
+    "commons_categories": {
+      "Canon Digital IXUS 75": 13496
+    },
+    "commons_total": 13496,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon DIGITAL IXUS 75": 42,
+      "Canon PowerShot SD750": 4,
+      "Canon IXY DIGITAL 90": 4
+    },
+    "native_long_short": [
+      3072,
+      2304
+    ]
+  },
+  {
+    "id": "canon-ixy-digital-600",
+    "brand": "Canon",
+    "name": "IXY DIGITAL 600",
+    "aliases": [
+      "IXUS 750",
+      "PowerShot SD550",
+      "익서스 750"
+    ],
+    "commons_categories": {
+      "Canon Digital IXUS 750": 17538
+    },
+    "commons_total": 17538,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon PowerShot SD550": 38,
+      "Canon DIGITAL IXUS 750": 10,
+      "Canon IXY DIGITAL 700": 2
+    },
+    "native_long_short": [
+      3600,
+      2700
+    ]
+  },
+  {
+    "id": "canon-ixy-digital-800-is",
+    "brand": "Canon",
+    "name": "IXY DIGITAL 800 IS",
+    "aliases": [
+      "IXUS 800 IS",
+      "PowerShot SD700 IS",
+      "익서스 800"
+    ],
+    "commons_categories": {
+      "Canon Digital IXUS 800 IS": 20393
+    },
+    "commons_total": 20393,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon DIGITAL IXUS 800 IS": 45,
+      "Canon PowerShot SD700 IS": 4,
+      "Canon IXY DIGITAL 800 IS": 1
+    },
+    "native_long_short": [
+      2816,
+      2112
+    ]
+  },
+  {
+    "id": "canon-powershot-a570-is",
+    "brand": "Canon",
+    "name": "PowerShot A570 IS",
+    "aliases": [
+      "파워샷 A570"
+    ],
+    "commons_categories": {
+      "Canon PowerShot A570 IS": 12068
+    },
+    "commons_total": 12068,
+    "exif_makes": {
+      "Canon": 50
+    },
+    "exif_models": {
+      "Canon PowerShot A570 IS": 50
+    },
+    "native_long_short": [
+      3072,
+      2304
+    ]
+  },
+  {
+    "id": "sony-dsc-t1",
+    "brand": "Sony",
+    "name": "Cyber-shot DSC-T1",
+    "aliases": [
+      "사이버샷 T1"
+    ],
+    "commons_categories": {
+      "Sony DSC-T1": 3716
+    },
+    "commons_total": 3716,
+    "exif_makes": {
+      "SONY": 50
+    },
+    "exif_models": {
+      "DSC-T1": 50
+    },
+    "native_long_short": [
+      2592,
+      1944
+    ]
+  },
+  {
+    "id": "sony-dsc-t10",
+    "brand": "Sony",
+    "name": "Cyber-shot DSC-T10",
+    "aliases": [
+      "사이버샷 T10"
+    ],
+    "commons_categories": {
+      "Sony DSC-T10": 6882
+    },
+    "commons_total": 6882,
+    "exif_makes": {
+      "SONY": 50
+    },
+    "exif_models": {
+      "DSC-T10": 50
+    },
+    "native_long_short": [
+      2592,
+      1944
+    ]
+  },
+  {
+    "id": "sony-dsc-t100",
+    "brand": "Sony",
+    "name": "Cyber-shot DSC-T100",
+    "aliases": [
+      "사이버샷 T100"
+    ],
+    "commons_categories": {
+      "Sony DSC-T100": 2915
+    },
+    "commons_total": 2915,
+    "exif_makes": {
+      "SONY": 50
+    },
+    "exif_models": {
+      "DSC-T100": 50
+    },
+    "native_long_short": [
+      3418,
+      2557
+    ]
+  },
+  {
+    "id": "sony-dsc-w1",
+    "brand": "Sony",
+    "name": "Cyber-shot DSC-W1",
+    "aliases": [
+      "사이버샷 W1"
+    ],
+    "commons_categories": {
+      "Sony DSC-W1": 10245
+    },
+    "commons_total": 10245,
+    "exif_makes": {
+      "SONY": 50
+    },
+    "exif_models": {
+      "DSC-W1": 50
+    },
+    "native_long_short": [
+      5038,
+      3817
+    ]
+  },
+  {
+    "id": "sony-dsc-w55",
+    "brand": "Sony",
+    "name": "Cyber-shot DSC-W55",
+    "aliases": [
+      "사이버샷 W55"
+    ],
+    "commons_categories": {
+      "Sony DSC-W55": 16695
+    },
+    "commons_total": 16695,
+    "exif_makes": {
+      "SONY": 50
+    },
+    "exif_models": {
+      "DSC-W55": 50
+    },
+    "native_long_short": [
+      6773,
+      2643
+    ]
+  },
+  {
+    "id": "sony-dsc-w80",
+    "brand": "Sony",
+    "name": "Cyber-shot DSC-W80",
+    "aliases": [
+      "사이버샷 W80"
+    ],
+    "commons_categories": {
+      "Sony DSC-W80": 7237
+    },
+    "commons_total": 7237,
+    "exif_makes": {
+      "SONY": 50
+    },
+    "exif_models": {
+      "DSC-W80": 50
+    },
+    "native_long_short": [
+      3072,
+      2304
+    ]
+  },
+  {
+    "id": "fujifilm-finepix-f31fd",
+    "brand": "Fujifilm",
+    "name": "FinePix F31fd",
+    "aliases": [
+      "파인픽스 F31"
+    ],
+    "commons_categories": {
+      "Fujifilm FinePix F31fd": 4040
+    },
+    "commons_total": 4040,
+    "exif_makes": {
+      "FUJIFILM": 50
+    },
+    "exif_models": {
+      "FinePix F31fd": 50
+    },
+    "native_long_short": [
+      2848,
+      2136
+    ]
+  },
+  {
+    "id": "fujifilm-finepix-f10",
+    "brand": "Fujifilm",
+    "name": "FinePix F10",
+    "aliases": [
+      "파인픽스 F10"
+    ],
+    "commons_categories": {
+      "Fujifilm FinePix F10": 7517
+    },
+    "commons_total": 7517,
+    "exif_makes": {
+      "FUJIFILM": 50
+    },
+    "exif_models": {
+      "FinePix F10": 50
+    },
+    "native_long_short": [
+      2848,
+      2136
+    ]
+  },
+  {
+    "id": "fujifilm-finepix-z1",
+    "brand": "Fujifilm",
+    "name": "FinePix Z1",
+    "aliases": [
+      "파인픽스 Z1"
+    ],
+    "commons_categories": {
+      "Fujifilm FinePix Z1": 1829
+    },
+    "commons_total": 1829,
+    "exif_makes": {
+      "FUJIFILM": 50
+    },
+    "exif_models": {
+      "FinePix Z1": 50
+    },
+    "native_long_short": [
+      2592,
+      1944
+    ]
+  },
+  {
+    "id": "fujifilm-finepix-z5fd",
+    "brand": "Fujifilm",
+    "name": "FinePix Z5fd",
+    "aliases": [
+      "파인픽스 Z5"
+    ],
+    "commons_categories": {
+      "Fujifilm FinePix Z5fd": 1561
+    },
+    "commons_total": 1561,
+    "exif_makes": {
+      "FUJIFILM": 50
+    },
+    "exif_models": {
+      "FinePix Z5fd": 50
+    },
+    "native_long_short": [
+      3024,
+      2016
+    ]
+  },
+  {
+    "id": "nikon-coolpix-s1",
+    "brand": "Nikon",
+    "name": "COOLPIX S1",
+    "aliases": [
+      "쿨픽스 S1"
+    ],
+    "commons_categories": {
+      "Nikon Coolpix S1": 116
+    },
+    "commons_total": 116,
+    "exif_makes": {
+      "NIKON": 49
+    },
+    "exif_models": {
+      "S1": 49
+    },
+    "native_long_short": [
+      2592,
+      1944
+    ]
+  },
+  {
+    "id": "nikon-coolpix-s3",
+    "brand": "Nikon",
+    "name": "COOLPIX S3",
+    "aliases": [
+      "쿨픽스 S3"
+    ],
+    "commons_categories": {
+      "Nikon Coolpix S3": 860
+    },
+    "commons_total": 860,
+    "exif_makes": {
+      "NIKON": 50
+    },
+    "exif_models": {
+      "COOLPIX S3": 50
+    },
+    "native_long_short": [
+      2816,
+      2112
+    ]
+  },
+  {
+    "id": "nikon-coolpix-s200",
+    "brand": "Nikon",
+    "name": "COOLPIX S200",
+    "aliases": [
+      "쿨픽스 S200"
+    ],
+    "commons_categories": {
+      "Nikon Coolpix S200": 2142
+    },
+    "commons_total": 2142,
+    "exif_makes": {
+      "NIKON": 50
+    },
+    "exif_models": {
+      "COOLPIX S200": 50
+    },
+    "native_long_short": [
+      3072,
+      2304
+    ]
+  },
+  {
+    "id": "nikon-coolpix-3200",
+    "brand": "Nikon",
+    "name": "COOLPIX 3200",
+    "aliases": [
+      "쿨픽스 3200"
+    ],
+    "commons_categories": {
+      "Nikon Coolpix 3200": 23881
+    },
+    "commons_total": 23881,
+    "exif_makes": {
+      "NIKON": 50
+    },
+    "exif_models": {
+      "E3200": 50
+    },
+    "native_long_short": [
+      2048,
+      1536
+    ]
+  },
+  {
+    "id": "olympus-mju-700",
+    "brand": "Olympus",
+    "name": "μ 700",
+    "aliases": [
+      "뮤 700",
+      "Stylus 700",
+      "mju 700"
+    ],
+    "commons_categories": {},
+    "commons_total": 0,
+    "exif_makes": {},
+    "exif_models": {},
+    "native_long_short": null
+  },
+  {
+    "id": "olympus-mju-400-digital",
+    "brand": "Olympus",
+    "name": "μ-40 DIGITAL",
+    "aliases": [
+      "뮤 40",
+      "Stylus 400",
+      "mju 400 digital"
+    ],
+    "commons_categories": {},
+    "commons_total": 0,
+    "exif_makes": {},
+    "exif_models": {},
+    "native_long_short": null
+  },
+  {
+    "id": "samsung-vluu-nv3",
+    "brand": "Samsung",
+    "name": "VLUU NV3",
+    "aliases": [
+      "블루 NV3",
+      "NV3"
+    ],
+    "commons_categories": {
+      "Samsung NV3": 114
+    },
+    "commons_total": 114,
+    "exif_makes": {
+      "Samsung Techwin": 48,
+      "g VLUU NV3>": 2
+    },
+    "exif_models": {
+      "<Samsung NV3, Samsung VLUU NV3>": 48,
+      "ung Techwin": 2
+    },
+    "native_long_short": [
+      3072,
+      2304
+    ]
+  },
+  {
+    "id": "samsung-vluu-nv7-ops",
+    "brand": "Samsung",
+    "name": "VLUU NV7 OPS",
+    "aliases": [
+      "블루 NV7",
+      "NV7"
+    ],
+    "commons_categories": {
+      "Samsung NV7": 107
+    },
+    "commons_total": 107,
+    "exif_makes": {
+      "SAMSUNG TECHWIN": 49
+    },
+    "exif_models": {
+      "VLUU NV 7, NV 7": 49
+    },
+    "native_long_short": [
+      4000,
+      1000
+    ]
+  },
+  {
+    "id": "samsung-vluu-l83t",
+    "brand": "Samsung",
+    "name": "VLUU L83T",
+    "aliases": [
+      "블루 L83T",
+      "L83T"
+    ],
+    "commons_categories": {
+      "Samsung L83T": 100
+    },
+    "commons_total": 100,
+    "exif_makes": {
+      "SAMSUNG TECHWIN CO., LTD.": 50
+    },
+    "exif_models": {
+      "VLUU L83T/ Samsung L83T": 50
+    },
+    "native_long_short": [
+      3264,
+      2448
+    ]
+  },
+  {
+    "id": "samsung-kenox-s630",
+    "brand": "Samsung",
+    "name": "KENOX S630",
+    "aliases": [
+      "케녹스 S630",
+      "S630"
+    ],
+    "commons_categories": {
+      "Samsung S630": 124
+    },
+    "commons_total": 124,
+    "exif_makes": {
+      "Samsung Techwin": 50
+    },
+    "exif_models": {
+      "<KENOX S630  / Samsung S630>": 50
+    },
+    "native_long_short": [
+      2816,
+      2112
+    ]
+  },
+  {
+    "id": "samsung-kenox-v700",
+    "brand": "Samsung",
+    "name": "KENOX V700",
+    "aliases": [
+      "케녹스 V700",
+      "Digimax V700"
+    ],
+    "commons_categories": {
+      "Samsung V700": 101
+    },
+    "commons_total": 101,
+    "exif_makes": {
+      "Samsung Techwin": 50
+    },
+    "exif_models": {
+      "<Digimax V700 / Kenox V10 / Digimax V10 >": 50
+    },
+    "native_long_short": [
+      3072,
+      2304
+    ]
+  },
+  {
+    "id": "casio-exilim-ex-z750",
+    "brand": "Casio",
+    "name": "EXILIM EX-Z750",
+    "aliases": [
+      "엑슬림 Z750"
+    ],
+    "commons_categories": {
+      "Casio Exilim EX-Z750": 437
+    },
+    "commons_total": 437,
+    "exif_makes": {
+      "CASIO COMPUTER CO.,LTD": 50
+    },
+    "exif_models": {
+      "EX-Z750": 50
+    },
+    "native_long_short": [
+      2048,
+      1536
+    ]
+  },
+  {
+    "id": "casio-exilim-ex-s500",
+    "brand": "Casio",
+    "name": "EXILIM EX-S500",
+    "aliases": [
+      "엑슬림 S500"
+    ],
+    "commons_categories": {
+      "Casio Exilim EX-S500": 101
+    },
+    "commons_total": 101,
+    "exif_makes": {
+      "CASIO COMPUTER CO.,LTD.": 50
+    },
+    "exif_models": {
+      "EX-S500": 50
+    },
+    "native_long_short": [
+      2560,
+      1920
+    ]
+  },
+  {
+    "id": "casio-exilim-ex-z3",
+    "brand": "Casio",
+    "name": "EXILIM EX-Z3",
+    "aliases": [
+      "엑슬림 Z3"
+    ],
+    "commons_categories": {
+      "Casio Exilim EX-Z3": 111
+    },
+    "commons_total": 111,
+    "exif_makes": {
+      "CASIO COMPUTER CO.,LTD": 50
+    },
+    "exif_models": {
+      "EX-Z3": 50
+    },
+    "native_long_short": [
+      2048,
+      1536
+    ]
+  },
+  {
+    "id": "panasonic-lumix-dmc-fx01",
+    "brand": "Panasonic",
+    "name": "LUMIX DMC-FX01",
+    "aliases": [
+      "루믹스 FX01",
+      "FX07"
+    ],
+    "commons_categories": {
+      "Panasonic Lumix DMC-FX01": 12134,
+      "Panasonic Lumix DMC-FX07": 5572
+    },
+    "commons_total": 17706,
+    "exif_makes": {
+      "Panasonic": 100
+    },
+    "exif_models": {
+      "DMC-FX01": 50,
+      "DMC-FX07": 50
+    },
+    "native_long_short": [
+      3072,
+      2304
+    ]
+  },
+  {
+    "id": "kodak-easyshare-v570",
+    "brand": "Kodak",
+    "name": "EasyShare V570",
+    "aliases": [
+      "코닥 V570"
+    ],
+    "commons_categories": {
+      "Kodak EasyShare V570": 1621
+    },
+    "commons_total": 1621,
+    "exif_makes": {
+      "EASTMAN KODAK COMPANY": 50
+    },
+    "exif_models": {
+      "KODAK V570 DUAL LENS DIGITAL CAMERA": 50
+    },
+    "native_long_short": [
+      4768,
+      1224
+    ]
+  },
+  {
+    "id": "pentax-optio-wp",
+    "brand": "Pentax",
+    "name": "Optio WP",
+    "aliases": [
+      "옵티오 WP"
+    ],
+    "commons_categories": {
+      "Pentax Optio WP": 913
+    },
+    "commons_total": 913,
+    "exif_makes": {
+      "PENTAX Corporation": 50
+    },
+    "exif_models": {
+      "PENTAX Optio WP": 50
+    },
+    "native_long_short": [
+      2560,
+      1920
+    ]
+  }
+]

@@ -1,0 +1,23 @@
+# 로컬 개발용 DB. 운영 DB는 Lightsail 관리형 PostgreSQL을 쓴다.
+# 실행: docker compose up -d   /   중지: docker compose down
+services:
+  postgres:
+    image: postgres:17
+    container_name: dica-jakrye-postgres
+    environment:
+      POSTGRES_DB: dica
+      POSTGRES_USER: dica
+      POSTGRES_PASSWORD: dica-local  # 로컬 전용 값. 운영 비밀번호는 여기에 두지 않는다.
+      TZ: Asia/Seoul
+    ports:
+      - "5433:5432"  # 이 맥의 5432는 다른 PostgreSQL이 쓰고 있어서 5433으로 연결
+    volumes:
+      - dica-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dica -d dica"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  dica-postgres-data:

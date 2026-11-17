@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: dica-jakrye
+  profiles:
+    default: local
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate  # 테이블은 Flyway 마이그레이션으로만 만든다. JPA가 테이블을 바꾸지 않게 한다.
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never  # 에러 응답에 내부 정보를 내보내지 않는다 (SECURITY.md 11장)
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+---
+# 로컬 개발: docker compose 의 PostgreSQL (5433)
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:postgresql://localhost:5433/dica
+    username: dica
+    password: dica-local
+  jpa:
+    show-sql: false
+
+---
+# 운영: 접속 정보는 환경변수로만 받는다. (값을 이 파일에 쓰지 않는다)
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}

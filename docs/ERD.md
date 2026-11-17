@@ -180,6 +180,7 @@ EXIF의 제조사와 모델명 조합을 기종에 연결한다. 검색 별칭�
 - (camera_id, flash_fired, created_at DESC, id DESC): 기종 페이지 + 플래시 필터
 - (camera_id, is_original_size, created_at DESC, id DESC): 기종 페이지 + 원본 크기 필터 (두 필터를 같이 쓰는 경우는 이 인덱스 + flash 조건으로 충분. 느려지면 세 컬럼 인덱스 추가)
 - (uploader_id, created_at DESC, id DESC): 프로필 피드
+- (created_at DESC, id DESC) `WHERE source = 'UPLOAD' AND camera_id IS NOT NULL`: 홈의 최근 올라온 작례 (`/api/photos/recent`)
 - (exif_make, exif_model) `WHERE camera_id IS NULL`: 미분류 연결
 
 업로드 횟수 제한용 인덱스 (삭제한 작례도 세야 하므로 부분 인덱스 아님):

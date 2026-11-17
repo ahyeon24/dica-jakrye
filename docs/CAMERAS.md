@@ -169,4 +169,9 @@
 - [ ] 원래 해상도 "확인 필요" 기종을 제조사 자료로 확인
 - [ ] 캐논 익서스 30·40의 일본 이름(IXY) 확인. 확인 안 되면 별칭에 넣지 않음
 - [ ] 직접 수집 기종 4개의 작례 모을 방법 정하기 (지인, 디카 커뮤니티, 인스타 DM 요청 등)
-- [ ] 확정되면 시드 데이터 파일로 만들기 (brand, camera, camera_alias, camera_exif_model, camera_source_category)
+- [x] 시드 데이터 (2026-11-17): Commons로 채울 수 있는 **26개**를 `V2__seed_cameras.sql`로 넣음
+  - 원본: `backend/scripts/gen_seed_cameras.py` (데이터 수정은 이 파일에서 하고 SQL을 다시 생성)
+  - EXIF 값은 Commons 표본 100장에서 실제로 나온 값만 넣음 (`poc/seed_exif_pairs.json`). 확인 안 된 값은 제외: IXUS 110 분류의 `CANON IXY DIGITAL 510 IS`, 제조사가 덮어써진 `OLYMPUS CORPORATION` + G11, 깨진 NV3 값
+  - 출시연도는 비워 둠 (아직 조사 안 함)
+- [ ] 나머지 4개(익서스 230 HS·310 HS, 작티 2개)는 모델명·EXIF 확인 후 다음 마이그레이션으로 추가. 산요 브랜드도 그때 추가
+- [ ] 출시연도 조사 후 채우기

@@ -1,0 +1,95 @@
+{
+ "Canon Digital IXUS 30": {
+  "Canon||Canon PowerShot SD200": 55,
+  "Canon||Canon DIGITAL IXUS 30": 45
+ },
+ "Canon Digital IXUS 40": {
+  "Canon||Canon DIGITAL IXUS 40": 50,
+  "Canon||Canon PowerShot SD300": 50
+ },
+ "Canon Digital IXUS 55": {
+  "Canon||Canon PowerShot SD450": 78,
+  "Canon||Canon DIGITAL IXUS 55": 21,
+  "Canon||Canon IXY DIGITAL 60": 1
+ },
+ "Canon Digital IXUS 60": {
+  "Canon||Canon PowerShot SD600": 75,
+  "Canon||Canon DIGITAL IXUS 60": 19,
+  "Canon||Canon IXY DIGITAL 70": 6
+ },
+ "Canon Digital IXUS 70": {
+  "Canon||Canon DIGITAL IXUS 70": 58,
+  "Canon||Canon PowerShot SD1000": 41,
+  "Canon||Canon IXY DIGITAL 10": 1
+ },
+ "Canon Digital IXUS 75": {
+  "Canon||Canon DIGITAL IXUS 75": 91,
+  "Canon||Canon PowerShot SD750": 5,
+  "Canon||Canon IXY DIGITAL 90": 4
+ },
+ "Canon Digital IXUS 110 IS": {
+  "Canon||Canon DIGITAL IXUS 110 IS": 95,
+  "Canon||Canon PowerShot SD960 IS": 4,
+  "CANON||CANON IXY DIGITAL 510 IS": 1
+ },
+ "Canon PowerShot G9": {
+  "Canon||Canon PowerShot G9": 99
+ },
+ "Canon PowerShot G11": {
+  "Canon||Canon PowerShot G11": 97,
+  "OLYMPUS CORPORATION||Canon PowerShot G11": 1
+ },
+ "Kodak EasyShare C713": {
+  "EASTMAN KODAK COMPANY||KODAK EASYSHARE C713 ZOOM DIGITAL CAMERA": 100
+ },
+ "Kodak EasyShare V570": {
+  "EASTMAN KODAK COMPANY||KODAK V570 DUAL LENS DIGITAL CAMERA": 100
+ },
+ "Fujifilm FinePix F470": {
+  "FUJIFILM||FinePix F470": 100
+ },
+ "Fujifilm FinePix F31fd": {
+  "FUJIFILM||FinePix F31fd": 100
+ },
+ "Fujifilm FinePix F10": {
+  "FUJIFILM||FinePix F10": 100
+ },
+ "Fujifilm FinePix Z1": {
+  "FUJIFILM||FinePix Z1": 100
+ },
+ "Ricoh R10": {
+  "RICOH||RICOH R10": 100
+ },
+ "Nikon Coolpix S4100": {
+  "NIKON||COOLPIX S4100": 100
+ },
+ "Nikon Coolpix S1": {
+  "NIKON||S1": 97
+ },
+ "Nikon Coolpix 3200": {
+  "NIKON||E3200": 98,
+  "NIKON CORPORATION||E3200": 2
+ },
+ "Sony DSC-T1": {
+  "SONY||DSC-T1": 100
+ },
+ "Sony DSC-T10": {
+  "SONY||DSC-T10": 100
+ },
+ "Sony DSC-W55": {
+  "SONY||DSC-W55": 100
+ },
+ "Samsung NV3": {
+  "Samsung Techwin||<Samsung NV3, Samsung VLUU NV3>": 98,
+  "g VLUU NV3>||ung Techwin": 2
+ },
+ "Samsung S630": {
+  "Samsung Techwin||<KENOX S630  / Samsung S630>": 100
+ },
+ "Olympus u700 / S-700": {
+  "OLYMPUS IMAGING CORP.||u700,S700": 100
+ },
+ "Casio Exilim EX-Z750": {
+  "CASIO COMPUTER CO.,LTD||EX-Z750": 100
+ }
+}

@@ -61,6 +61,7 @@ users 1 ── N terms_agreement
 | id | bigint | PK | |
 | brand_id | bigint | NOT NULL, FK → brand | |
 | name | varchar(100) | NOT NULL | 대표 이름 (IXUS 30) |
+| name_ko | varchar(100) | | 화면 표시용 한글 이름 (익서스 30). 대표 이름과 같으면 null |
 | slug | varchar(120) | NOT NULL, UNIQUE | URL용 (`canon-ixus-30`) |
 | release_year | smallint | | 출시연도 |
 | native_width | integer | | 카메라 원래 해상도 가로 px (예: 2592). 원본 크기 판별용. 모르면 null |

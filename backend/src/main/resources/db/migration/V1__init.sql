@@ -15,6 +15,7 @@ CREATE TABLE camera (
     id                    bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     brand_id              bigint       NOT NULL REFERENCES brand (id),
     name                  varchar(100) NOT NULL,
+    name_ko               varchar(100),          -- 화면 표시용 한글 이름 (예: 익서스 30)
     slug                  varchar(120) NOT NULL UNIQUE,
     release_year          smallint,
     sensor_type           varchar(10)  CHECK (sensor_type IN ('CCD', 'CMOS')),

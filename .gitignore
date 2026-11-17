@@ -12,3 +12,6 @@ application-local.yml
 # Python
 __pycache__/
 *.pyc
+
+# 로컬 이미지 저장소 (개발용)
+data/

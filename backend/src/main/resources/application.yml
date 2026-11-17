@@ -31,6 +31,26 @@ app:
   image:
     # 공개 이미지 주소 앞부분. 운영은 https://img.{도메인} (R2 공개 버킷)
     base-url: ${IMAGE_BASE_URL:http://localhost:8080/dev-images}
+  storage:
+    type: local          # local | r2 (r2는 배포 전에 추가)
+    local:
+      dir: ./data/images # 로컬 개발용. Git에 올리지 않음
+  commons:
+    api-url: https://commons.wikimedia.org/w/api.php
+    # 위키미디어 규칙: 서비스 이름/버전 (연락처) 라이브러리. 연락처는 운영용 메일 (개인 메일 X). 도메인이 생기면 서비스 주소 추가
+    user-agent: ${COMMONS_USER_AGENT:dica-jakrye/0.1 (dicajakrye@gmail.com) java-http-client/21}
+    request-delay: 2s
+    download-delay: 3s   # 처음 만드는 축소본은 서버 부담이 커서 1초 간격이면 429로 막힘 (2026-11-17 확인)
+    pool-size: 500
+    per-camera: 100
+    per-author: 10
+    min-long-side: 400
+    cameras-per-run: 50
+  batch:
+    run-on-startup: ""   # 예: commons-collect
+    commons-collect:
+      cron: "-"          # 운영: "0 0 4 * * *" (매일 새벽 4시). "-"이면 끔
+      only-slugs: ""     # 예: canon-ixus-30,sony-dsc-t1 (테스트용)
 
 ---
 # 로컬 개발: docker compose 의 PostgreSQL (5433)

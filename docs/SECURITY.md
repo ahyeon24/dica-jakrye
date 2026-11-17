@@ -134,8 +134,8 @@ https://{도메인}/login?redirect=https://해커사이트.com
 
 ## 12-1. 외부 서비스 이용 규칙
 
-- [ ] Wikimedia Commons에 요청할 때 User-Agent에 서비스 이름과 연락처를 넣는다. 연락처에는 개인 이메일 대신 운영용 이메일이나 서비스 주소를 쓴다.
-- [ ] Commons 요청은 순서대로 하나씩, 이미지 다운로드는 1초에 1장 이하. 막히면 대기 시간을 늘려 다시 시도한다. ([ARCHITECTURE.md](./ARCHITECTURE.md) 3.3)
+- [ ] Wikimedia Commons에 요청할 때 User-Agent에 서비스 이름과 연락처를 넣는다. 연락처에는 개인 이메일 대신 운영용 이메일(dicajakrye@gmail.com)이나 서비스 주소를 쓴다.
+- [ ] Commons 요청은 순서대로 하나씩, 이미지 다운로드는 3초에 1장 이하. 막히면 대기 시간을 늘려 다시 시도한다. ([ARCHITECTURE.md](./ARCHITECTURE.md) 3.3)
 - [ ] Commons 작례는 작가·라이선스·원본 링크·크기 조정 표시가 빠지지 않게 한다. 정보가 없는 사진은 저장하지 않는다.
 - [ ] 네이버 데이터랩(NCP API HUB)은 MVP에서 쓰지 않는다. 검증용 키는 `poc/.env`에만 있고 Git에 올리지 않는다. NCP 계정에는 결제 수단이 등록되어 있으므로 예산 알림을 켜 두고 다른 서비스는 만들지 않는다. 다시 쓸 때의 주의사항은 [LATER.md](./LATER.md).
 

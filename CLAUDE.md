@@ -21,12 +21,19 @@
 
 - `backend/`: Spring Boot 4.1, Java 21, PostgreSQL 17, Flyway, JPA + JdbcClient
 - `poc/`: 외부 데이터 검증 스크립트 (Commons, 네이버 데이터랩). `poc/.env`에 키가 있다
-- 프론트(Next.js)는 아직 없음
+- `frontend/`: Next.js 16.4 (App Router, **Cache Components 켬**), TypeScript, Tailwind CSS 4
+  - **이 Next.js는 예전 버전과 API가 다르다. 코드를 쓰기 전에 `frontend/node_modules/next/dist/docs/`의 해당 문서를 읽는다.** (`frontend/AGENTS.md`)
+  - 백엔드 데이터를 읽는 서버 컴포넌트는 `<Suspense>` 안에 둔다. `params`·`searchParams`는 Promise다.
+  - 서버에서는 `src/lib/api.ts`(server-only)로 백엔드를 직접 부르고, 브라우저에서는 `/api/*`(rewrites로 백엔드에 전달)를 부른다.
+  - 이미지는 백엔드가 이미 크기를 맞춰 두므로 `next/image` 최적화를 쓰지 않는다. (`components/Thumb.tsx`)
+  - 화면은 반응형 하나로, 휴대폰 먼저. 작례 격자는 3·4·6칸 (ARCHITECTURE.md 2.1)
 
 ```bash
 docker compose up -d                 # 로컬 DB (포트 5433, 이 맥의 5432는 다른 PostgreSQL이 사용 중)
 cd backend && ./gradlew test         # Testcontainers로 빈 DB를 띄워 테스트 (Docker 필요)
 cd backend && ./gradlew bootRun      # local 프로필, http://localhost:8080
+cd frontend && npm run dev            # http://localhost:3000 (백엔드가 켜져 있어야 함)
+cd frontend && npx tsc --noEmit && npm run lint
 # Commons 수집을 특정 기종만 한 번 돌리기
 ./gradlew bootRun --args='--app.batch.run-on-startup=commons-collect --app.batch.commons-collect.only-slugs=canon-ixus-30 --app.commons.per-camera=20'
 ```

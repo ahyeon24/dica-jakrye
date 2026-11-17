@@ -355,6 +355,22 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 - 삭제됐거나 없으면 `404 PHOTO_NOT_FOUND`
 - `isMine`: 로그인한 사용자가 올린 작례면 true. 삭제 버튼 표시용
 
+### `GET /api/photos/{id}/adjacent?flash=true&originalOnly=true` — 이전·다음 작례 · 공개
+
+작례 상세에서 옆으로 넘길 때 쓴다. 순서와 필터는 기종 작례 목록(`/api/cameras/{slug}/photos`)과 같다.
+
+```json
+{
+  "prev": { "id": 1044, "...": "작례 상세와 같은 형식" },
+  "next": { "id": 1042, "...": "작례 상세와 같은 형식" }
+}
+```
+
+- `prev`: 격자에서 바로 앞 작례(더 최신), `next`: 바로 뒤 작례(더 오래됨). 처음·끝이면 null
+- 넘기자마자 정보까지 바꿔 보여주려고 상세 형식 전체를 준다.
+- 미분류 작례는 기종 순서가 없으므로 둘 다 null
+- 작례가 없거나 삭제됐으면 `404 PHOTO_NOT_FOUND`
+
 ### `POST /api/photos/{id}/views` — 조회수 증가 · 공개
 
 - 상세 페이지가 브라우저에서 열릴 때 프론트가 호출한다. 서버 렌더링(검색봇 포함)에서는 호출하지 않는다.

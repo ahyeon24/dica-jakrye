@@ -255,6 +255,30 @@ class ReadApiTest {
         }
 
         @Test
+        void 이전_다음은_격자_순서와_필터를_따른다() throws Exception {
+            insertCommonsPhotos("canon-ixus-30", 6); // 6이 가장 최신. 3·6은 플래시
+            MvcTestResult list = mvc.get().uri("/api/cameras/canon-ixus-30/photos").exchange();
+            long first = Long.parseLong(extract(list, "$.items[0].id"));
+            long second = Long.parseLong(extract(list, "$.items[1].id"));
+            long last = Long.parseLong(extract(list, "$.items[5].id"));
+
+            MvcTestResult r = mvc.get().uri("/api/photos/{id}/adjacent", second).exchange();
+            assertThat(r).hasStatusOk();
+            assertThat(r).bodyJson().extractingPath("$.prev.id").isEqualTo((int) first);
+            assertThat(r).bodyJson().extractingPath("$.next.id").isEqualTo((int) Long.parseLong(extract(list, "$.items[2].id")));
+            assertThat(r).bodyJson().extractingPath("$.prev.commons.author").isEqualTo("작가 6");
+
+            assertThat(mvc.get().uri("/api/photos/{id}/adjacent", first).exchange()).bodyJson()
+                    .extractingPath("$.prev").isNull();
+            assertThat(mvc.get().uri("/api/photos/{id}/adjacent", last).exchange()).bodyJson()
+                    .extractingPath("$.next").isNull();
+
+            // 플래시 필터: 6 다음은 3
+            MvcTestResult f = mvc.get().uri("/api/photos/{id}/adjacent", first).param("flash", "true").exchange();
+            assertThat(f).bodyJson().extractingPath("$.next.commons.author").isEqualTo("작가 3");
+        }
+
+        @Test
         void 숫자가_아닌_id는_400() {
             assertThat(mvc.get().uri("/api/photos/abc").exchange()).hasStatus(400);
         }

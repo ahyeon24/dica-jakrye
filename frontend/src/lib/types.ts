@@ -92,3 +92,8 @@ export type PhotoDetail = {
   createdAt: string;
   isMine: boolean;
 };
+
+export type Adjacent = {
+  prev: PhotoDetail | null; // 격자에서 바로 앞 (더 최신)
+  next: PhotoDetail | null; // 바로 뒤 (더 오래됨)
+};

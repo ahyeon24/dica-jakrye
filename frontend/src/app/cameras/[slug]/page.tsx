@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PhotoGrid } from "@/components/PhotoGrid";
 import { apiGet } from "@/lib/api";
+import { readFilters, toQuery, type PhotoFilters } from "@/lib/filters";
 import { cameraTitle } from "@/lib/format";
 import type { CameraDetail, Page, PhotoSummary } from "@/lib/types";
 
@@ -16,20 +17,6 @@ export default function CameraPage({ params, searchParams }: Props) {
   );
 }
 
-/** URL 필터를 정리한다. 알 수 없는 값은 무시 */
-function readFilters(sp: Record<string, string | string[] | undefined>) {
-  const flash = sp.flash === "true" || sp.flash === "false" ? sp.flash : undefined;
-  const originalOnly = sp.originalOnly === "true";
-  return { flash, originalOnly };
-}
-
-function toQuery(f: { flash?: string; originalOnly: boolean }) {
-  const q = new URLSearchParams();
-  if (f.flash) q.set("flash", f.flash);
-  if (f.originalOnly) q.set("originalOnly", "true");
-  return q.toString();
-}
-
 async function CameraContent({ params, searchParams }: Pick<Props, "params" | "searchParams">) {
   const [{ slug }, sp] = await Promise.all([params, searchParams]);
   const filters = readFilters(sp);
@@ -41,7 +28,7 @@ async function CameraContent({ params, searchParams }: Pick<Props, "params" | "s
   ]);
   if (!camera || !firstPage) notFound();
 
-  const href = (f: { flash?: string; originalOnly: boolean }) => {
+  const href = (f: PhotoFilters) => {
     const q = toQuery(f);
     return `/cameras/${camera.slug}${q ? `?${q}` : ""}`;
   };

@@ -71,6 +71,60 @@ public class PhotoService {
                 false); // TODO 로그인을 만들면 현재 사용자와 uploader_id를 비교한다
     }
 
+    /** 이전·다음 작례. 순서는 기종 작례 격자와 같다 (최신순). 필터도 같게 적용한다. */
+    public record AdjacentResponse(PhotoDetailResponse prev, PhotoDetailResponse next) {
+    }
+
+    record Position(Long cameraId, OffsetDateTime createdAt) {
+    }
+
+    /**
+     * prev = 격자에서 바로 앞(더 최신), next = 바로 뒤(더 오래됨).
+     * 미분류 작례는 기종 순서가 없으므로 둘 다 null.
+     */
+    @Transactional(readOnly = true)
+    public AdjacentResponse adjacent(long id, Boolean flash, boolean originalOnly) {
+        Position pos = jdbc.sql("SELECT camera_id, created_at FROM photo WHERE id = :id AND deleted_at IS NULL")
+                .param("id", id)
+                .query(Position.class)
+                .optional()
+                .orElseThrow(() -> new ApiException(ErrorCode.PHOTO_NOT_FOUND));
+        if (pos.cameraId() == null) {
+            return new AdjacentResponse(null, null);
+        }
+        Long prevId = neighborId(pos, id, flash, originalOnly, true);
+        Long nextId = neighborId(pos, id, flash, originalOnly, false);
+        return new AdjacentResponse(prevId == null ? null : detail(prevId), nextId == null ? null : detail(nextId));
+    }
+
+    private Long neighborId(Position pos, long id, Boolean flash, boolean originalOnly, boolean newer) {
+        StringBuilder sql = new StringBuilder("""
+                SELECT id FROM photo
+                 WHERE camera_id = :cameraId
+                   AND deleted_at IS NULL
+                """);
+        if (flash != null) {
+            sql.append(" AND flash_fired = :flash");
+        }
+        if (originalOnly) {
+            sql.append(" AND is_original_size = true");
+        }
+        if (newer) {
+            sql.append(" AND (created_at > :at OR (created_at = :at AND id > :id)) ORDER BY created_at ASC, id ASC");
+        } else {
+            sql.append(" AND (created_at < :at OR (created_at = :at AND id < :id)) ORDER BY created_at DESC, id DESC");
+        }
+        sql.append(" LIMIT 1");
+        var spec = jdbc.sql(sql.toString())
+                .param("cameraId", pos.cameraId())
+                .param("at", pos.createdAt())
+                .param("id", id);
+        if (flash != null) {
+            spec = spec.param("flash", flash);
+        }
+        return spec.query(Long.class).optional().orElse(null);
+    }
+
     /** 조회수 +1. MVP는 DB에서 바로 올린다. 사용자가 많아지면 바꾼다 (docs/API.md, ARCHITECTURE.md 3.8) */
     @Transactional
     public void increaseView(long id) {

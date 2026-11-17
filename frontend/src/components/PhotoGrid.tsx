@@ -55,13 +55,10 @@ export function PhotoGrid({
     <div className="space-y-4">
       <ul className="grid grid-cols-3 gap-0.5 md:grid-cols-4 lg:grid-cols-6">
         {items.map((p) => (
-          <li key={p.id} className="relative">
+          <li key={p.id}>
             <Link href={`/photos/${p.id}${query ? `?${query}` : ""}`} className="block">
               <Thumb src={p.thumbnailUrl} alt={p.credit ? `${p.credit}의 작례` : "작례"} className="aspect-square w-full" />
             </Link>
-            <div className="pointer-events-none absolute bottom-1 left-1 flex gap-0.5">
-              {p.isOriginalSize === false && <Badge>줄인 사진</Badge>}
-            </div>
           </li>
         ))}
       </ul>
@@ -80,6 +77,3 @@ export function PhotoGrid({
   );
 }
 
-function Badge({ children }: { children: React.ReactNode }) {
-  return <span className="rounded bg-black/60 px-1 text-[10px] leading-4 text-white">{children}</span>;
-}

@@ -1,6 +1,7 @@
 package com.dicajakrye.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static com.dicajakrye.TestCsrf.csrf;
 
 import com.dicajakrye.TestcontainersConfiguration;
 import com.jayway.jsonpath.JsonPath;
@@ -239,7 +240,7 @@ class ReadApiTest {
             assertThat(mvc.get().uri("/api/photos/{id}", id).exchange()).bodyJson()
                     .extractingPath("$.code").isEqualTo("PHOTO_NOT_FOUND");
             assertThat(mvc.get().uri("/api/photos/999999999").exchange()).hasStatus(404);
-            assertThat(mvc.post().uri("/api/photos/{id}/views", id).exchange()).hasStatus(404);
+            assertThat(mvc.post().uri("/api/photos/{id}/views", id).with(csrf()).exchange()).hasStatus(404);
         }
 
         @Test
@@ -247,8 +248,8 @@ class ReadApiTest {
             insertCommonsPhotos("canon-ixus-30", 1);
             long id = jdbc.sql("SELECT id FROM photo ORDER BY id DESC LIMIT 1").query(Long.class).single();
 
-            assertThat(mvc.post().uri("/api/photos/{id}/views", id).exchange()).hasStatus(204);
-            assertThat(mvc.post().uri("/api/photos/{id}/views", id).exchange()).hasStatus(204);
+            assertThat(mvc.post().uri("/api/photos/{id}/views", id).with(csrf()).exchange()).hasStatus(204);
+            assertThat(mvc.post().uri("/api/photos/{id}/views", id).with(csrf()).exchange()).hasStatus(204);
             int views = jdbc.sql("SELECT view_count FROM photo WHERE id = :id").param("id", id)
                     .query(Integer.class).single();
             assertThat(views).isEqualTo(2);

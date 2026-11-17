@@ -19,11 +19,16 @@
 
 ## 폴더와 명령
 
-- `backend/`: Spring Boot 4.1, Java 21, PostgreSQL 17, Flyway, JPA + JdbcClient
+- `backend/`: Spring Boot 4.1, Java 21, PostgreSQL 17, Flyway, JPA + JdbcClient, Spring Security(구글·카카오 OAuth) + Spring Session JDBC
+  - 로컬 로그인 키는 `backend/.env` (Git 제외, `.env.example` 참고)
+  - 테스트의 쓰기 요청은 `TestCsrf.csrf()`를 쓴다. spring-security-test의 `csrf()`는 앱의 CSRF 저장소를 세션 방식으로 바꿔 다른 테스트를 깨뜨린다.
 - `poc/`: 외부 데이터 검증 스크립트 (Commons, 네이버 데이터랩). `poc/.env`에 키가 있다
 - `frontend/`: Next.js 16.4 (App Router, **Cache Components 켬**), TypeScript, Tailwind CSS 4
   - **이 Next.js는 예전 버전과 API가 다르다. 코드를 쓰기 전에 `frontend/node_modules/next/dist/docs/`의 해당 문서를 읽는다.** (`frontend/AGENTS.md`)
   - 백엔드 데이터를 읽는 서버 컴포넌트는 `<Suspense>` 안에 둔다. `params`·`searchParams`는 Promise다.
+  - `usePathname`·`useSearchParams`를 쓰는 클라이언트 컴포넌트도 `<Suspense>` 안에 둔다. (빠뜨리면 개발 화면에 "Blocking Route" 오류)
+  - 화면을 고친 뒤에는 curl만 보지 말고 브라우저에서 Next 오류 표시가 없는지 확인한다.
+  - 브라우저의 쓰기 요청은 `lib/client.ts`의 `apiSend`를 쓴다. (CSRF 헤더를 붙임)
   - 서버에서는 `src/lib/api.ts`(server-only)로 백엔드를 직접 부르고, 브라우저에서는 `/api/*`(rewrites로 백엔드에 전달)를 부른다.
   - 이미지는 백엔드가 이미 크기를 맞춰 두므로 `next/image` 최적화를 쓰지 않는다. (`components/Thumb.tsx`)
   - 화면은 반응형 하나로, 휴대폰 먼저. 작례 격자는 3·4·6칸 (ARCHITECTURE.md 2.1)

@@ -49,5 +49,6 @@ npm run dev   # http://localhost:3000
 ## 비밀 정보
 
 - `.env`, `application-local.yml`은 Git에 올리지 않는다. (`.gitignore`)
-- 운영 DB 접속 정보는 환경변수 `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`로만 받는다.
+- 로컬 로그인 키: `backend/.env.example`을 `backend/.env`로 복사해 구글·카카오 키를 채운다. 백엔드가 시작할 때 읽는다. 없으면 로그인만 안 되고 나머지는 동작한다.
+- 운영 값은 환경변수로만 받는다: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET`, `FRONT_URL`, `CORS_ALLOWED_ORIGINS`, `COOKIE_DOMAIN`
 - 자세한 규칙은 `docs/SECURITY.md`

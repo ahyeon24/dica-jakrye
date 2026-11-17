@@ -33,6 +33,8 @@
 쿠키로 인증하므로 쓰기 요청(POST, PATCH, DELETE)은 CSRF 토큰이 필요하다.
 
 - 서버가 `XSRF-TOKEN` 쿠키를 내려주고(JS에서 읽을 수 있음), 프론트는 쓰기 요청마다 같은 값을 `X-XSRF-TOKEN` 헤더에 넣는다. (Spring Security `CookieCsrfTokenRepository`)
+- 쿠키는 API 응답마다 내려온다. 쓰기 요청 전에 쿠키가 없으면 `GET /api/csrf`(204)를 먼저 부른다. (`frontend/src/lib/client.ts`)
+- 실패하면 `403 CSRF_TOKEN_INVALID`
 - CORS: 프론트 도메인만 허용, `credentials: include`
 
 ### 1.4 응답 형식
@@ -100,20 +102,22 @@ GET /api/cameras/canon-ixus-30/photos?size=24&cursor=eyJ0Ijo...
 
 ### `GET /api/auth/signup` — 가입 대기 정보 · 공개 (가입 대기 세션 필요)
 
-가입 화면에 미리 채울 값을 준다.
+가입 화면에 보여줄 정보를 준다.
 
 ```json
 {
   "provider": "KAKAO",
-  "suggestedNickname": "디카러버",
   "terms": [
     { "type": "TERMS_OF_SERVICE", "version": "2026-11-01", "url": "/terms/2026-11-01" },
     { "type": "PRIVACY_COLLECTION", "version": "2026-11-01", "url": "/privacy-consent/2026-11-01" }
-  ]
+  ],
+  "redirect": "/cameras/canon-ixus-30"
 }
 ```
 
 - `terms`: 지금 시행 중인 약관 목록. 모두 필수 동의다.
+- `redirect`: 가입을 마친 뒤 돌아갈 내부 경로 (로그인 시작 때 저장한 값)
+- 제공자에게서 닉네임을 받지 않으므로 미리 채워 줄 닉네임은 없다. 카카오 닉네임은 실명인 경우가 많아, 그대로 공개 닉네임이 되는 일을 막기 위해서다.
 
 - 가입 대기 세션이 없으면 `401 SIGNUP_SESSION_NOT_FOUND`
 
@@ -350,7 +354,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 - `author`는 서버가 HTML을 지운 글자만 내려준다.
 
 - 미분류 작례는 `camera`가 null
-- `isOriginalSize`(작례 상세·요약 공통): true면 원본 크기, false면 "줄인 사진" 표시, null이면 알 수 없음(표시 안 함)
+- `isOriginalSize`(작례 상세·요약 공통): true면 원본 크기, false면 줄인 사진, null이면 알 수 없음. "원본 크기만" 필터에 쓰고, 화면에 따로 표시하지는 않는다.
 - 1600px보다 작은 사진은 `displayUrl`도 원래 크기 그대로다. 화면에서 늘리지 않는다.
 - 삭제됐거나 없으면 `404 PHOTO_NOT_FOUND`
 - `isMine`: 로그인한 사용자가 올린 작례면 true. 삭제 버튼 표시용

@@ -97,3 +97,18 @@ export type Adjacent = {
   prev: PhotoDetail | null; // 격자에서 바로 앞 (더 최신)
   next: PhotoDetail | null; // 바로 뒤 (더 오래됨)
 };
+
+export type Me = {
+  id: number;
+  nickname: string;
+  profileImageUrl: string | null;
+  role: "USER" | "ADMIN";
+  provider: "GOOGLE" | "KAKAO";
+  photoCount: number;
+};
+
+export type SignupInfo = {
+  provider: "GOOGLE" | "KAKAO";
+  terms: { type: "TERMS_OF_SERVICE" | "PRIVACY_COLLECTION"; version: string; url: string }[];
+  redirect: string;
+};

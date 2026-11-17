@@ -25,7 +25,7 @@ public class PhotoService {
         this.imageUrls = imageUrls;
     }
 
-    record DetailRow(long id, String source, String displayKey, String thumbnailKey, Integer width, Integer height,
+    record DetailRow(long id, String source, Long uploaderId, String displayKey, String thumbnailKey, Integer width, Integer height,
                      Boolean isOriginalSize, OffsetDateTime createdAt,
                      LocalDateTime takenAt, Boolean flashFired, BigDecimal fNumber, String exposureTime,
                      Integer iso, BigDecimal focalLength,
@@ -34,10 +34,11 @@ public class PhotoService {
                      String commonsAuthor, String licenseName, String licenseUrl, String pageUrl) {
     }
 
+    /** 로그인하지 않았으면 viewerId는 null */
     @Transactional(readOnly = true)
-    public PhotoDetailResponse detail(long id) {
+    public PhotoDetailResponse detail(long id, Long viewerId) {
         DetailRow r = jdbc.sql("""
-                        SELECT p.id, p.source, p.display_key, p.thumbnail_key, p.width, p.height,
+                        SELECT p.id, p.source, p.uploader_id, p.display_key, p.thumbnail_key, p.width, p.height,
                                p.is_original_size, p.created_at,
                                p.taken_at, p.flash_fired, p.f_number, p.exposure_time, p.iso, p.focal_length,
                                c.slug AS camera_slug, c.name AS camera_name, c.name_ko AS camera_name_ko,
@@ -68,7 +69,7 @@ public class PhotoService {
         return new PhotoDetailResponse(r.id(), r.source(), imageUrls.publicUrl(r.displayKey()),
                 imageUrls.publicUrl(r.thumbnailKey()), r.width(), r.height(), r.isOriginalSize(),
                 camera, exif, uploader, commons, r.createdAt(),
-                false); // TODO 로그인을 만들면 현재 사용자와 uploader_id를 비교한다
+                viewerId != null && viewerId.equals(r.uploaderId()));
     }
 
     /** 이전·다음 작례. 순서는 기종 작례 격자와 같다 (최신순). 필터도 같게 적용한다. */
@@ -83,7 +84,7 @@ public class PhotoService {
      * 미분류 작례는 기종 순서가 없으므로 둘 다 null.
      */
     @Transactional(readOnly = true)
-    public AdjacentResponse adjacent(long id, Boolean flash, boolean originalOnly) {
+    public AdjacentResponse adjacent(long id, Boolean flash, boolean originalOnly, Long viewerId) {
         Position pos = jdbc.sql("SELECT camera_id, created_at FROM photo WHERE id = :id AND deleted_at IS NULL")
                 .param("id", id)
                 .query(Position.class)
@@ -94,7 +95,7 @@ public class PhotoService {
         }
         Long prevId = neighborId(pos, id, flash, originalOnly, true);
         Long nextId = neighborId(pos, id, flash, originalOnly, false);
-        return new AdjacentResponse(prevId == null ? null : detail(prevId), nextId == null ? null : detail(nextId));
+        return new AdjacentResponse(prevId == null ? null : detail(prevId, viewerId), nextId == null ? null : detail(nextId, viewerId));
     }
 
     private Long neighborId(Position pos, long id, Boolean flash, boolean originalOnly, boolean newer) {

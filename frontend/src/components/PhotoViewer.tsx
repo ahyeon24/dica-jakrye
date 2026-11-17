@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { apiSend } from "@/lib/client";
 import { cameraTitle } from "@/lib/format";
 import type { Adjacent, PhotoDetail } from "@/lib/types";
 
@@ -42,7 +43,7 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
   useEffect(() => {
     if (pinged.current === current.id) return;
     pinged.current = current.id;
-    fetch(`/api/photos/${current.id}/views`, { method: "POST", keepalive: true }).catch(() => {});
+    apiSend("POST", `/api/photos/${current.id}/views`, undefined, { keepalive: true }).catch(() => {});
   }, [current.id]);
 
   // 앞에 사진이 끼어들어도 지금 사진이 화면 가운데 오도록 스크롤 위치를 맞춘다 (그리기 전에)
@@ -125,9 +126,6 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
         </div>
         <figcaption className="text-xs text-muted">
           <Credit photo={current} />
-          {current.isOriginalSize === false && (
-            <span className="ml-2 rounded bg-foreground px-1 text-background">줄인 사진</span>
-          )}
         </figcaption>
       </figure>
 
@@ -140,12 +138,6 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
             </div>
           ))}
         </dl>
-      )}
-
-      {current.isOriginalSize === false && (
-        <p className="text-xs text-muted">
-          원래 카메라 해상도보다 작은 사진이에요. 화질은 실제보다 낮거나 다르게 보일 수 있어요.
-        </p>
       )}
     </div>
   );

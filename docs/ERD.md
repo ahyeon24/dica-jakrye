@@ -126,8 +126,8 @@ EXIF의 제조사와 모델명 조합을 기종에 연결한다. 검색 별칭�
 |---|---|---|---|
 | id | bigint | PK | |
 | provider | varchar(10) | NOT NULL | GOOGLE / KAKAO |
-| provider_user_id | varchar(100) | | 제공자의 회원 ID. 탈퇴하면 null |
-| nickname | varchar(30) | NOT NULL, UNIQUE | 프로필 주소에 쓴다. 제공자 닉네임이 겹치면 숫자를 붙여 만든다 |
+| provider_user_id | varchar(100) | | 제공자의 회원 ID (구글 sub, 카카오 회원번호). 탈퇴하면 null. 제공자에게서 받는 정보는 이것뿐이다 |
+| nickname | varchar(30) | NOT NULL, UNIQUE | 프로필 주소에 쓴다. 가입 화면에서 사용자가 직접 정한다 (2~20자, 한글·영문·숫자·밑줄) |
 | profile_image_key | varchar(300) | | R2 객체 키. 없으면 기본 이미지 |
 | role | varchar(10) | NOT NULL, 기본 USER | USER / ADMIN |
 | created_at | timestamptz | NOT NULL | |
@@ -249,6 +249,14 @@ EXIF의 제조사와 모델명 조합을 기종에 연결한다. 검색 별칭�
 - 회원 탈퇴 후에도 남긴다. 다만 개인정보 보관 기간은 개인정보처리방침에 적은 기간을 따르고, 기간이 지나면 지운다.
 - 약관 본문은 DB에 넣지 않는다. 프론트에 버전별 페이지로 두고, 예전 버전도 볼 수 있게 남긴다. (예: `/terms/2026-11-01`)
 - 현재 시행 중인 버전은 애플리케이션 설정에 둔다.
+
+### 3.11 `spring_session`, `spring_session_attributes` 로그인 세션
+
+Spring Session JDBC가 쓰는 테이블. 스키마는 라이브러리가 정한 그대로 `V3__spring_session.sql`로 만든다. 직접 읽거나 쓰지 않는다.
+
+- 세션을 서버 메모리가 아니라 DB에 두어, 재배포해도 로그인이 유지되고 서버를 여러 대로 늘려도 같은 세션을 본다. ([API.md](./API.md) 1.2)
+- 담는 값: 로그인한 회원 id, 가입 대기 정보(제공자·회원번호), 로그인 후 돌아갈 경로. 구글·카카오 토큰은 담지 않는다.
+- 로그인 안 한 방문자에게는 세션을 만들지 않는다. 만료된 세션은 라이브러리가 주기적으로 지운다.
 
 ## 4. EXIF·별칭 정규화 규칙
 

@@ -29,7 +29,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	implementation 'net.coobird:thumbnailator:0.4.20'
-	implementation 'org.jsoup:jsoup:1.21.1'
+	implementation 'org.jsoup:jsoup:1.24.1'
 	implementation 'com.drewnoakes:metadata-extractor:2.19.0'   // 업로드 사진 EXIF 읽기
 	implementation 'org.apache.commons:commons-imaging:1.0.0-alpha6'   // 원본에서 GPS만 지우기 (재인코딩 없이)
 	compileOnly 'org.projectlombok:lombok'

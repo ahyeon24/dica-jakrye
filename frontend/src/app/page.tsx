@@ -8,10 +8,8 @@ import type { BrandItem, Page, PhotoSummary } from "@/lib/types";
 export default function Home() {
   return (
     <div className="space-y-8">
-      <section className="space-y-2">
-        <h1 className="text-xl font-bold">빈티지 디카, 사기 전에 작례부터</h1>
-        <p className="text-sm text-muted">그 기종으로 진짜 찍은 사진을 모아 보세요.</p>
-      </section>
+      {/* 화면에는 안 보이지만 검색엔진·화면 읽기 프로그램을 위해 페이지 제목은 둔다 */}
+      <h1 className="sr-only">디카작례 — 빈티지 디카 작례 모음</h1>
 
       <CameraSearch />
 

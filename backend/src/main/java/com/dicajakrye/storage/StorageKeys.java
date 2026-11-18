@@ -21,6 +21,20 @@ public final class StorageKeys {
         return "commons/thumb/" + commonsPageId + ".jpg";
     }
 
+    /** 사용자 업로드: 파일 이름은 서버가 만든 무작위 id (추측해서 다른 파일을 찾을 수 없게) */
+    public static String uploadDisplay(String fileId) {
+        return "uploads/display/" + fileId + ".jpg";
+    }
+
+    public static String uploadThumbnail(String fileId) {
+        return "uploads/thumb/" + fileId + ".jpg";
+    }
+
+    /** 비공개 저장소의 원본 (GPS만 지운 파일) */
+    public static String uploadOriginal(String fileId) {
+        return "originals/" + fileId + ".jpg";
+    }
+
     public static String requireValid(String key) {
         if (key == null || !ALLOWED.matcher(key).matches() || key.contains("..") || key.contains("//")) {
             throw new IllegalArgumentException("허용되지 않는 저장 키: " + key);

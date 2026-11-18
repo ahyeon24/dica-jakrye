@@ -35,6 +35,14 @@ public class ImageProcessor {
     }
 
     public Processed process(byte[] source) {
+        return process(source, 1);
+    }
+
+    /**
+     * @param orientation EXIF Orientation (1~8). 세로로 찍은 사진은 카메라가 픽셀을 눕혀 저장하고 이 값으로 알려 준다.
+     *                    새로 인코딩하면 이 태그가 사라지므로 픽셀을 직접 돌려 둔다. sourceWidth/Height도 돌린 뒤 기준.
+     */
+    public Processed process(byte[] source, int orientation) {
         int[] size = readSize(source);
         if ((long) size[0] * size[1] > MAX_PIXELS) {
             throw new ImageRejectedException("픽셀 수 초과: " + size[0] + "x" + size[1]);
@@ -48,6 +56,7 @@ public class ImageProcessor {
         if (image == null) {
             throw new ImageRejectedException("지원하지 않는 이미지 형식");
         }
+        image = Orientation.apply(image, orientation);
         return new Processed(
                 resize(image, DISPLAY_LONG_SIDE),
                 resize(image, THUMBNAIL_LONG_SIDE),
@@ -55,7 +64,7 @@ public class ImageProcessor {
     }
 
     /** 헤더만 읽어서 가로·세로를 구한다. 픽셀 데이터는 읽지 않는다 */
-    static int[] readSize(byte[] source) {
+    public static int[] readSize(byte[] source) {
         try (ImageInputStream in = ImageIO.createImageInputStream(new ByteArrayInputStream(source))) {
             if (in == null) {
                 throw new ImageRejectedException("지원하지 않는 이미지 형식");

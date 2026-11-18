@@ -2,6 +2,7 @@ package com.dicajakrye.commons;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.dicajakrye.common.ExifValues;
 import com.dicajakrye.commons.CommonsFileFilter.Accepted;
 import com.dicajakrye.commons.CommonsFileFilter.CameraRule;
 import com.dicajakrye.commons.CommonsFileFilter.Reject;
@@ -97,11 +98,11 @@ class CommonsFileFilterTest {
 
     @Test
     void 숫자_형식이_이상해도_죽지_않고_null() {
-        assertThat(CommonsFileFilter.decimal("1/0", 1)).isNull();
-        assertThat(CommonsFileFilter.decimal("abc", 1)).isNull();
-        assertThat(CommonsFileFilter.exposure("0.0166667")).isEqualTo("1/60");
-        assertThat(CommonsFileFilter.flash("16")).isFalse(); // 강제 발광 끔
-        assertThat(CommonsFileFilter.flash(null)).isNull();
-        assertThat(CommonsFileFilter.takenAt("0000:00:00 00:00:00")).isNull();
+        assertThat(ExifValues.decimal("1/0", 1)).isNull();
+        assertThat(ExifValues.decimal("abc", 1)).isNull();
+        assertThat(ExifValues.exposure("0.0166667")).isEqualTo("1/60");
+        assertThat(ExifValues.flash("16")).isFalse(); // 강제 발광 끔
+        assertThat(ExifValues.flash(null)).isNull();
+        assertThat(ExifValues.takenAt("0000:00:00 00:00:00")).isNull();
     }
 }

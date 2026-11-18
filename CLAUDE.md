@@ -75,6 +75,7 @@ cd frontend && npx tsc --noEmit && npm run lint
 
 ## 작업 방식
 
+- push하면 CI(`.github/workflows/ci.yml`)가 백엔드 테스트와 프론트 검사·빌드를 돌린다. push한 뒤 결과를 확인한다. (`gh run list`, `gh run watch`)
 - 응답과 문서는 한국어로 쓴다.
 - 기능을 만들면 테스트를 함께 만들고, 실제로 돌려서 확인한 뒤 결과를 알려 준다.
 - 외부 서비스의 정책·요금·API는 기억으로 단정하지 말고 공식 문서나 실제 호출로 확인한다. (Flickr 키 발급 조건, 네이버 데이터랩 이관을 기억으로 안내했다가 틀린 적 있음)

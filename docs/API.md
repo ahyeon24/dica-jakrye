@@ -391,9 +391,11 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
    → EXIF 없음: 원본 파일 안내, 업로드 막음
    → GET /api/cameras/exif-match 로 인식 결과를 미리 보여줌
 3. 사용자가 확인 + 동의 체크 후 업로드
-   → POST /api/photos (파일 1번만 전송)
+   → POST https://api.{도메인}/api/photos (파일 1번만 전송)
 4. 서버가 EXIF를 다시 읽어서 최종 판단 (프론트 결과는 미리보기용일 뿐)
 ```
+
+- **업로드만은 브라우저가 API 서버로 바로 보낸다.** 다른 API는 프론트의 `/api/*`를 거치지만, 최대 20MB 파일이 프론트 서버(Vercel)를 거치면 요청 크기 제한에 걸릴 수 있다. 쿠키(세션·CSRF)를 함께 보내야 해서 CORS `credentials: include`를 쓰고, 운영 쿠키는 `Domain=.{도메인}`이다. (1.2, 1.3)
 
 ### `GET /api/cameras/exif-match?make=Canon&model=Canon%20DIGITAL%20IXUS%2030` — EXIF 인식 미리보기 · 로그인
 
@@ -432,6 +434,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
   - `400 IMAGE_DIMENSIONS_TOO_LARGE`: 픽셀 수가 4,000만을 넘음 (이미지 폭탄 방지)
   - `413 FILE_TOO_LARGE`
   - `429 UPLOAD_RATE_LIMITED`: 1시간에 30장 초과 (수치는 운영하며 조정). 최근 1시간 업로드 수를 DB에서 센다. 삭제한 작례도 포함한다.
+  - `503 UPLOAD_BUSY`: 서버 한 대가 동시에 처리하는 업로드는 2장까지다 (`app.upload.max-concurrent`). 30초를 기다려도 차례가 오지 않으면 거절한다.
 
 ### `DELETE /api/photos/{id}` — 내 작례 삭제 · 로그인
 
@@ -573,6 +576,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 | 413 | FILE_TOO_LARGE | 20MB 초과 |
 | 429 | UPLOAD_RATE_LIMITED | 업로드 횟수 초과 |
 | 500 | INTERNAL_ERROR | 서버 오류 (Sentry에 기록) |
+| 503 | UPLOAD_BUSY | 동시에 올리는 사람이 많아 30초 안에 처리를 시작하지 못함 |
 
 ## 10. 미정 사항
 

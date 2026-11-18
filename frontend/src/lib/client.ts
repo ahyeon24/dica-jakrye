@@ -71,3 +71,33 @@ export async function apiSend<T = void>(
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
 }
+
+/**
+ * 작례 올리기. 큰 파일이 프론트 서버(Vercel)를 거치지 않도록 API 서버로 바로 보낸다.
+ * 쿠키(세션·CSRF)를 같이 보내야 해서 credentials: "include" (API 서버 CORS가 우리 프론트만 허용)
+ */
+export async function uploadPhoto<T>(file: File, agreedToUploadPolicy: boolean): Promise<T> {
+  const token = await csrfToken();
+  const form = new FormData();
+  form.append("file", file);
+  form.append("agreedToUploadPolicy", String(agreedToUploadPolicy));
+  const res = await fetch(`${API_ORIGIN}/api/photos`, {
+    method: "POST",
+    credentials: "include",
+    headers: token ? { "X-XSRF-TOKEN": token } : {},
+    body: form,
+  });
+  if (!res.ok) {
+    let code: string | null = null;
+    let message = "올리지 못했어요. 잠시 후 다시 시도해 주세요.";
+    try {
+      const data = (await res.json()) as { code?: string; message?: string };
+      code = data.code ?? null;
+      message = data.message ?? message;
+    } catch {
+      if (res.status === 413) message = "20MB보다 큰 파일은 올릴 수 없어요.";
+    }
+    throw new ClientApiError(res.status, code, message);
+  }
+  return (await res.json()) as T;
+}

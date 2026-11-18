@@ -46,6 +46,15 @@ npm run dev   # http://localhost:3000
 - 테스트는 Testcontainers로 빈 PostgreSQL을 따로 띄워서 돌린다: `./gradlew test` (Docker 필요)
 - DB를 처음부터 다시 만들려면: `docker compose down -v` 후 다시 `up`
 
+## CI (자동 검사)
+
+`main`에 push하거나 PR을 열면 GitHub Actions가 자동으로 돌린다. (`.github/workflows/ci.yml`)
+
+- 백엔드: `./gradlew test` (Testcontainers로 PostgreSQL을 띄워서)
+- 프론트: `npx tsc --noEmit`, `npm run lint`, `npm run build`
+
+결과는 GitHub 저장소의 Actions 탭과 커밋 옆 체크 표시로 본다. 비밀 값은 쓰지 않는다.
+
 ## 비밀 정보
 
 - `.env`, `application-local.yml`은 Git에 올리지 않는다. (`.gitignore`)

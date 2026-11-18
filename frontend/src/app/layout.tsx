@@ -21,11 +21,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/" className="text-lg font-bold tracking-tight">
               디카작례
             </Link>
-            {/* 올리기는 업로드 기능을 만들 때 연결 */}
-            {/* 주소(usePathname)를 읽으므로 Suspense 안에 둔다 (Cache Components) */}
-            <Suspense fallback={<span className="h-5 w-16" aria-hidden />}>
-              <AuthMenu />
-            </Suspense>
+            <div className="flex items-center gap-4">
+              <Link href="/upload" className="text-sm font-medium hover:underline">
+                올리기
+              </Link>
+              {/* 주소(usePathname)를 읽으므로 Suspense 안에 둔다 (Cache Components) */}
+              <Suspense fallback={<span className="h-5 w-16" aria-hidden />}>
+                <AuthMenu />
+              </Suspense>
+            </div>
           </div>
         </header>
 

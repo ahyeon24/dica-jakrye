@@ -55,9 +55,18 @@ npm run dev   # http://localhost:3000
 
 결과는 GitHub 저장소의 Actions 탭과 커밋 옆 체크 표시로 본다. 비밀 값은 쓰지 않는다.
 
+## 운영 메모
+
+- **관리자 지정**: 가입한 뒤 DB에서 권한을 바꾼다. 권한은 요청마다 DB에서 확인하므로 바로 반영된다.
+  ```sql
+  UPDATE users SET role = 'ADMIN' WHERE nickname = '닉네임';
+  ```
+  관리자는 헤더의 **관리** 링크(`/admin/reports`)에서 신고를 처리한다.
+- **신고 알림 메일**: `MAIL_USERNAME`(Gmail 주소), `MAIL_PASSWORD`(Gmail 앱 비밀번호)를 넣으면 신고가 들어올 때 `ADMIN_NOTIFY_EMAIL`(기본: 운영 메일)로 알림을 보낸다. 비우면 로그만 남긴다.
+
 ## 비밀 정보
 
 - `.env`, `application-local.yml`은 Git에 올리지 않는다. (`.gitignore`)
 - 로컬 로그인 키: `backend/.env.example`을 `backend/.env`로 복사해 구글·카카오 키를 채운다. 백엔드가 시작할 때 읽는다. 없으면 로그인만 안 되고 나머지는 동작한다.
-- 운영 값은 환경변수로만 받는다: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET`, `FRONT_URL`, `CORS_ALLOWED_ORIGINS`, `COOKIE_DOMAIN`
+- 운영 값은 환경변수로만 받는다: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET`, `FRONT_URL`, `CORS_ALLOWED_ORIGINS`, `COOKIE_DOMAIN`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `ADMIN_NOTIFY_EMAIL`
 - 자세한 규칙은 `docs/SECURITY.md`

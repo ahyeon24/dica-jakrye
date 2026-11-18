@@ -10,6 +10,18 @@ spring:
   config:
     # 로컬 비밀 값(backend/.env, Git에 안 올라감). 운영은 서버 환경변수로 넣으므로 이 파일이 없다.
     import: optional:file:.env[.properties]
+  mail:
+    # 신고 알림 메일 (Gmail SMTP + 앱 비밀번호). 사용자 이름이 비어 있으면 메일 대신 로그만 남긴다
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000
   security:
     oauth2:
       client:
@@ -73,6 +85,8 @@ app:
     # 현재 시행 중인 약관 버전 (ERD.md 3.10). 약관 페이지를 만들 때 실제 시행일로 바꾼다
     terms-of-service: "2026-11-01"
     privacy-collection: "2026-11-01"
+  notify:
+    admin-email: ${ADMIN_NOTIFY_EMAIL:dicajakrye@gmail.com}   # 신고 알림을 받을 운영 메일
   upload:
     max-per-hour: 30     # 한 사람이 1시간에 올릴 수 있는 장수 (운영하며 조정)
     max-concurrent: 2    # 이 서버에서 동시에 처리할 업로드 수 (2GB 서버 기준)

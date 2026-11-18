@@ -55,6 +55,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/me", "/api/me/**", "/api/cameras/exif-match").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/photos").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/photos/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/photos/*/reports").authenticated()
+                        // 관리자 여부는 컨트롤러에서 요청마다 DB로 확인한다 (AdminCheck)
+                        .requestMatchers("/api/admin/**").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> SecurityErrors.write(res, ErrorCode.UNAUTHORIZED))

@@ -63,7 +63,7 @@ public class UserQueries {
     }
 
     public int photoCount(long userId) {
-        return jdbc.sql("SELECT count(*) FROM photo WHERE uploader_id = :id AND deleted_at IS NULL")
+        return jdbc.sql("SELECT count(*) FROM photo WHERE uploader_id = :id AND deleted_at IS NULL AND hidden_at IS NULL")
                 .param("id", userId)
                 .query(Integer.class)
                 .single();

@@ -25,10 +25,10 @@ public class CameraQueries {
 
     private static final String SUMMARY_SELECT = """
             SELECT c.id, c.slug, c.name, c.name_ko, c.release_year, b.name AS brand_name,
-                   (SELECT count(*) FROM photo p WHERE p.camera_id = c.id AND p.deleted_at IS NULL) AS photo_count,
+                   (SELECT count(*) FROM photo p WHERE p.camera_id = c.id AND p.deleted_at IS NULL AND p.hidden_at IS NULL) AS photo_count,
                    COALESCE(
-                       (SELECT p.thumbnail_key FROM photo p WHERE p.id = c.cover_photo_id AND p.deleted_at IS NULL),
-                       (SELECT p.thumbnail_key FROM photo p WHERE p.camera_id = c.id AND p.deleted_at IS NULL
+                       (SELECT p.thumbnail_key FROM photo p WHERE p.id = c.cover_photo_id AND p.deleted_at IS NULL AND p.hidden_at IS NULL),
+                       (SELECT p.thumbnail_key FROM photo p WHERE p.camera_id = c.id AND p.deleted_at IS NULL AND p.hidden_at IS NULL
                          ORDER BY p.created_at DESC, p.id DESC LIMIT 1)
                    ) AS cover_thumbnail_key
               FROM camera c
@@ -95,7 +95,7 @@ public class CameraQueries {
                                count(*) FILTER (WHERE flash_fired) AS flash,
                                count(*) FILTER (WHERE is_original_size) AS original_size
                           FROM photo
-                         WHERE camera_id = :id AND deleted_at IS NULL
+                         WHERE camera_id = :id AND deleted_at IS NULL AND hidden_at IS NULL
                         """)
                 .param("id", cameraId)
                 .query(PhotoCountsRow.class)

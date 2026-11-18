@@ -58,7 +58,7 @@ public class PhotoQueries {
                   LEFT JOIN users u ON u.id = p.uploader_id
                   LEFT JOIN commons_meta m ON m.photo_id = p.id
                   LEFT JOIN camera c ON c.id = p.camera_id
-                 WHERE p.deleted_at IS NULL AND\s""").append(where);
+                 WHERE p.deleted_at IS NULL AND p.hidden_at IS NULL AND\s""").append(where);
         if (cursor != null) {
             sql.append(" AND (p.created_at < :cursorAt OR (p.created_at = :cursorAt AND p.id < :cursorId))");
         }
@@ -86,6 +86,7 @@ public class PhotoQueries {
                   LEFT JOIN commons_meta m ON m.photo_id = p.id
                  WHERE p.camera_id = :cameraId
                    AND p.deleted_at IS NULL
+                   AND p.hidden_at IS NULL
                 """);
         if (flash != null) {
             sql.append(" AND p.flash_fired = :flash");

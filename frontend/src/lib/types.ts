@@ -91,6 +91,7 @@ export type PhotoDetail = {
   } | null;
   createdAt: string;
   isMine: boolean;
+  hiddenByReport: boolean; // 신고로 가려짐. 올린 사람·관리자에게만 이 상태로 보인다
 };
 
 export type Adjacent = {

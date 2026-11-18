@@ -3,6 +3,7 @@ package com.dicajakrye.photo;
 import com.dicajakrye.common.ApiException;
 import com.dicajakrye.common.ErrorCode;
 import com.dicajakrye.common.ImageUrls;
+import com.dicajakrye.user.AdminCheck;
 import com.dicajakrye.photo.PhotoDetailResponse.CameraRef;
 import com.dicajakrye.photo.PhotoDetailResponse.Commons;
 import com.dicajakrye.photo.PhotoDetailResponse.Exif;
@@ -19,14 +20,16 @@ public class PhotoService {
 
     private final JdbcClient jdbc;
     private final ImageUrls imageUrls;
+    private final AdminCheck adminCheck;
 
-    public PhotoService(JdbcClient jdbc, ImageUrls imageUrls) {
+    public PhotoService(JdbcClient jdbc, ImageUrls imageUrls, AdminCheck adminCheck) {
         this.jdbc = jdbc;
         this.imageUrls = imageUrls;
+        this.adminCheck = adminCheck;
     }
 
     record DetailRow(long id, String source, Long uploaderId, String displayKey, String thumbnailKey, Integer width, Integer height,
-                     Boolean isOriginalSize, OffsetDateTime createdAt,
+                     Boolean isOriginalSize, OffsetDateTime createdAt, OffsetDateTime hiddenAt,
                      LocalDateTime takenAt, Boolean flashFired, BigDecimal fNumber, String exposureTime,
                      Integer iso, BigDecimal focalLength,
                      String cameraSlug, String cameraName, String cameraNameKo, String brandName,
@@ -39,7 +42,7 @@ public class PhotoService {
     public PhotoDetailResponse detail(long id, Long viewerId) {
         DetailRow r = jdbc.sql("""
                         SELECT p.id, p.source, p.uploader_id, p.display_key, p.thumbnail_key, p.width, p.height,
-                               p.is_original_size, p.created_at,
+                               p.is_original_size, p.created_at, p.hidden_at,
                                p.taken_at, p.flash_fired, p.f_number, p.exposure_time, p.iso, p.focal_length,
                                c.slug AS camera_slug, c.name AS camera_name, c.name_ko AS camera_name_ko,
                                b.name AS brand_name,
@@ -57,6 +60,13 @@ public class PhotoService {
                 .query(DetailRow.class)
                 .optional()
                 .orElseThrow(() -> new ApiException(ErrorCode.PHOTO_NOT_FOUND));
+        // 신고로 가린 작례는 올린 사람과 관리자만 본다 (PRD F8)
+        if (r.hiddenAt() != null) {
+            boolean owner = viewerId != null && viewerId.equals(r.uploaderId());
+            if (!owner && !adminCheck.isAdmin(viewerId)) {
+                throw new ApiException(ErrorCode.PHOTO_NOT_FOUND);
+            }
+        }
 
         CameraRef camera = r.cameraSlug() == null ? null
                 : new CameraRef(r.cameraSlug(), r.cameraName(), r.cameraNameKo(), r.brandName());
@@ -69,7 +79,8 @@ public class PhotoService {
         return new PhotoDetailResponse(r.id(), r.source(), imageUrls.publicUrl(r.displayKey()),
                 imageUrls.publicUrl(r.thumbnailKey()), r.width(), r.height(), r.isOriginalSize(),
                 camera, exif, uploader, commons, r.createdAt(),
-                viewerId != null && viewerId.equals(r.uploaderId()));
+                viewerId != null && viewerId.equals(r.uploaderId()),
+                r.hiddenAt() != null);
     }
 
     /** 이전·다음 작례. 순서는 기종 작례 격자와 같다 (최신순). 필터도 같게 적용한다. */
@@ -103,6 +114,7 @@ public class PhotoService {
                 SELECT id FROM photo
                  WHERE camera_id = :cameraId
                    AND deleted_at IS NULL
+                   AND hidden_at IS NULL
                 """);
         if (flash != null) {
             sql.append(" AND flash_fired = :flash");
@@ -129,7 +141,7 @@ public class PhotoService {
     /** 조회수 +1. MVP는 DB에서 바로 올린다. 사용자가 많아지면 바꾼다 (docs/API.md, ARCHITECTURE.md 3.8) */
     @Transactional
     public void increaseView(long id) {
-        int updated = jdbc.sql("UPDATE photo SET view_count = view_count + 1 WHERE id = :id AND deleted_at IS NULL")
+        int updated = jdbc.sql("UPDATE photo SET view_count = view_count + 1 WHERE id = :id AND deleted_at IS NULL AND hidden_at IS NULL")
                 .param("id", id)
                 .update();
         if (updated == 0) {

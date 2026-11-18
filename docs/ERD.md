@@ -171,6 +171,7 @@ EXIF의 제조사와 모델명 조합을 기종에 연결한다. 검색 별칭�
 | created_at | timestamptz | NOT NULL | 업로드 시각 (Commons는 가져온 시각) |
 | updated_at | timestamptz | NOT NULL | |
 | deleted_at | timestamptz | | 삭제 시각 |
+| hidden_at | timestamptz | | **신고로 가린 시각 (임시조치).** 초상권·도용 신고가 들어오면 채우고, 관리자가 기각하면 비운다. 채워져 있으면 공개 목록·상세·개수에서 모두 빠진다 (올린 사람과 관리자만 볼 수 있음). 이미지 파일은 그대로 두므로 파일 주소를 이미 아는 사람은 볼 수 있다. 업로드 파일 이름은 추측할 수 없는 무작위 값이고, 삭제로 결정하면 파일도 지운다 |
 
 제약:
 - CHECK: `source = 'UPLOAD'`이면 `uploader_id`, `original_key`가 NOT NULL
@@ -229,7 +230,10 @@ EXIF의 제조사와 모델명 조합을 기종에 연결한다. 검색 별칭�
 
 - UNIQUE (photo_id, reporter_id): 같은 사람의 중복 신고 방지
 - INDEX (status, created_at): 미처리 신고 목록
+- INDEX (reporter_id, created_at): 하루 신고 수 제한 (10건)
 - "해당 기종 사진 아님" 신고는 삭제 대신 기종을 바꿔서 처리할 수 있어서 `action`을 따로 둔다.
+- 처리는 작례 단위다. 한 작례의 PENDING 신고를 함께 RESOLVED(삭제·기종 변경) 또는 REJECTED(기각, 가렸으면 다시 공개)로 바꾼다.
+- 초상권·도용(PORTRAIT_RIGHTS, STOLEN) 신고는 접수와 같은 트랜잭션에서 `photo.hidden_at`을 채운다. (PRD F8)
 
 ### 3.10 `terms_agreement` 약관 동의 기록
 
@@ -278,7 +282,9 @@ EXIF 모델명 안에 제조사 이름이 들어 있기도 하고 없기도 해�
 | 미분류 연결 | `camera_exif_model` 1행 추가 → 같은 (exif_make, exif_model)의 미분류 `photo.camera_id` 일괄 갱신 |
 | Commons 수집 | `photo` + `commons_meta` 1행씩, R2에 썸네일·보기용 저장. `commons_page_id`가 이미 있으면 건너뜀. 기종 끝날 때마다 `camera.commons_collected_at` 갱신 |
 | Commons 정리 | `last_checked_at` 갱신, Commons에서 사라진 파일은 `photo.deleted_at` 채움 + R2 파일 삭제 |
+| 신고 접수 (초상권·도용) | `report` 1행 + `photo.hidden_at` 채움 (임시조치) |
 | 신고 → 삭제 | `photo.deleted_at` 채움 + R2 파일 삭제, `report` RESOLVED / DELETED |
+| 신고 → 기각 | `report` REJECTED, `photo.hidden_at` 비움 (다시 공개) |
 | 신고 → 기종 변경 | `photo.camera_id` 변경, `report` RESOLVED / CAMERA_CHANGED |
 | 회원 탈퇴 | `users` 개인정보 지움, `deleted_at` 채움 + 그 사용자의 `photo` 전부 `deleted_at` 채움 + R2 파일 삭제 |
 | 가입 | `users` 1행 + `terms_agreement` 약관 종류별 1행씩 (한 트랜잭션) |

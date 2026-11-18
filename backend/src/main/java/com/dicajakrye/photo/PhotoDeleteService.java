@@ -57,6 +57,30 @@ public class PhotoDeleteService {
         deleteFiles(t);
     }
 
+    /**
+     * 관리자 삭제 (신고 처리, Commons 저작권자 요청). 올린 사람 확인을 하지 않는다.
+     */
+    public void deleteAsAdmin(long photoId) {
+        Target t = tx.execute(status -> markDeleted(photoId));
+        deleteFiles(t);
+    }
+
+    Target markDeleted(long photoId) {
+        Target found = jdbc.sql("""
+                        SELECT id, uploader_id, display_key, thumbnail_key, original_key
+                          FROM photo WHERE id = :id AND deleted_at IS NULL
+                           FOR UPDATE
+                        """)
+                .param("id", photoId)
+                .query(Target.class)
+                .optional()
+                .orElseThrow(() -> new ApiException(ErrorCode.PHOTO_NOT_FOUND));
+        jdbc.sql("UPDATE photo SET deleted_at = now(), updated_at = now() WHERE id = :id")
+                .param("id", photoId)
+                .update();
+        return found;
+    }
+
     private void deleteFiles(Target t) {
         try {
             storage.delete(Visibility.PUBLIC, t.displayKey());

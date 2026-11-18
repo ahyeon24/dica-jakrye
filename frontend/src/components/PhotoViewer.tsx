@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { apiSend, ClientApiError } from "@/lib/client";
+import { apiSend } from "@/lib/client";
 import { cameraTitle } from "@/lib/format";
 import type { Adjacent, PhotoDetail } from "@/lib/types";
+import { PhotoMenu } from "./PhotoMenu";
 
 const DISPLAY_LONG_SIDE = 1600; // 보기용 이미지 긴 변 (백엔드 ImageProcessor와 같음)
 
@@ -36,7 +37,7 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
     fetch(`/api/photos/${initial.id}`, { signal: controller.signal })
       .then((res) => (res.ok ? (res.json() as Promise<PhotoDetail>) : null))
       .then((fresh) => {
-        if (fresh?.isMine) setCurrent((cur) => (cur.id === fresh.id ? { ...cur, isMine: true } : cur));
+        if (fresh?.isMine) setCurrent((cur) => (cur.id === fresh.id ? { ...cur, isMine: true, hiddenByReport: fresh.hiddenByReport } : cur));
       })
       .catch(() => {});
     return () => controller.abort();
@@ -129,9 +130,32 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
         ) : (
           <span className="text-sm text-muted">미분류 작례</span>
         )}
-        {/* ⋯ 메뉴: 내 작례면 삭제하기. 신고하기는 신고 기능을 만들 때 추가 (와이어프레임 3쪽) */}
-        {current.isMine && <PhotoMenu key={current.id} onDelete={deleteCurrent} />}
+        {/* ⋯ 메뉴: 내 작례면 삭제하기, 아니면 신고하기 (와이어프레임 3쪽) */}
+        <PhotoMenu
+          key={current.id}
+          photoId={current.id}
+          isMine={current.isMine}
+          onDelete={deleteCurrent}
+          onHiddenByReport={() => {
+            router.replace(backHref);
+            router.refresh();
+          }}
+        />
       </div>
+
+      {current.hiddenByReport && (
+        <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+          <p className="font-medium">신고가 들어와 임시로 가려진 작례예요.</p>
+          <p className="mt-1">
+            지금은 올린 사람과 운영자만 볼 수 있어요. 운영자가 확인한 뒤 최대 30일 안에 다시 공개하거나 삭제해요. 이의가
+            있으면{" "}
+            <a href="mailto:dicajakrye@gmail.com" className="underline">
+              dicajakrye@gmail.com
+            </a>
+            으로 알려 주세요.
+          </p>
+        </div>
+      )}
 
       <figure className="space-y-2">
         <div className="relative aspect-[4/3] max-h-[80vh] w-full bg-line/40">
@@ -161,79 +185,6 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
             </div>
           ))}
         </dl>
-      )}
-    </div>
-  );
-}
-
-/** ⋯ 메뉴. 삭제는 되돌릴 수 없어서 한 번 더 확인한다 */
-function PhotoMenu({ onDelete }: { onDelete: () => Promise<void> }) {
-  const [open, setOpen] = useState(false);
-  const [confirming, setConfirming] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function confirmDelete() {
-    setBusy(true);
-    setError(null);
-    try {
-      await onDelete();
-    } catch (e) {
-      setError(e instanceof ClientApiError ? e.message : "지우지 못했어요. 다시 시도해 주세요.");
-      setBusy(false);
-    }
-  }
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        aria-label="작례 메뉴"
-        aria-expanded={open}
-        onClick={() => {
-          setOpen((v) => !v);
-          setConfirming(false);
-          setError(null);
-        }}
-        className="rounded px-2 text-lg leading-none text-muted hover:text-foreground"
-      >
-        ⋯
-      </button>
-      {open && (
-        <div className="absolute right-0 z-20 mt-1 w-56 rounded-lg border border-line bg-card p-1 text-sm shadow-lg">
-          {!confirming ? (
-            <button
-              type="button"
-              onClick={() => setConfirming(true)}
-              className="w-full rounded px-3 py-2 text-left text-red-600 hover:bg-background"
-            >
-              삭제하기
-            </button>
-          ) : (
-            <div className="space-y-2 p-2">
-              <p>이 작례를 지울까요? 되돌릴 수 없어요.</p>
-              {error && <p className="text-xs text-red-600">{error}</p>}
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={confirmDelete}
-                  disabled={busy}
-                  className="flex-1 rounded bg-red-600 py-1.5 font-medium text-white disabled:opacity-50"
-                >
-                  {busy ? "지우는 중…" : "지우기"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConfirming(false)}
-                  disabled={busy}
-                  className="flex-1 rounded border border-line py-1.5"
-                >
-                  취소
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
       )}
     </div>
   );

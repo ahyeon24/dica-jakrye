@@ -40,6 +40,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {/* 개인정보처리방침·이용약관 페이지는 법적 고지(F9)를 만들 때 연결 */}
             <p>개인정보처리방침 · 이용약관</p>
             <p>일부 작례는 Wikimedia Commons의 자유 라이선스 사진입니다. 사진마다 작가와 라이선스를 표시합니다.</p>
+            {/* 사진에 나온 사람은 회원이 아닐 수 있다. 로그인 없이 신고할 수 있는 창구 (PRD F8·F9) */}
+            <p>
+              초상권·저작권 침해 신고:{" "}
+              <a href="mailto:dicajakrye@gmail.com" className="underline">
+                dicajakrye@gmail.com
+              </a>
+            </p>
           </div>
         </footer>
       </body>

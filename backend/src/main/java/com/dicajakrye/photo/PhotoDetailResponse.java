@@ -18,7 +18,8 @@ public record PhotoDetailResponse(
         Uploader uploader,       // Commons면 null
         Commons commons,         // 업로드면 null
         OffsetDateTime createdAt,
-        boolean isMine
+        boolean isMine,
+        boolean hiddenByReport   // 신고로 가려짐. 올린 사람·관리자에게만 이 상태로 보인다
 ) {
     public record CameraRef(String slug, String name, String nameKo, String brandName) {
     }

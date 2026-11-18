@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PhotoGrid } from "@/components/PhotoGrid";
+import { MyHiddenPhotos } from "@/components/MyHiddenPhotos";
 import { ProfileOwnerActions } from "@/components/ProfileOwnerActions";
 import { apiGet } from "@/lib/api";
 import type { Page, PhotoSummary, Profile } from "@/lib/types";
@@ -43,6 +44,8 @@ async function ProfileContent({ params }: Pick<Props, "params">) {
         </div>
         <ProfileOwnerActions nickname={profile.nickname} />
       </div>
+
+      <MyHiddenPhotos nickname={profile.nickname} />
 
       <PhotoGrid
         endpoint={`${path}/photos`}

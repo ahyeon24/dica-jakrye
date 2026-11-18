@@ -51,6 +51,11 @@ export function AuthMenu() {
 
   return (
     <div className="flex items-center gap-3 text-sm">
+      {me.role === "ADMIN" && (
+        <Link href="/admin/reports" className="text-muted hover:text-foreground">
+          관리
+        </Link>
+      )}
       <Link href={`/users/${encodeURIComponent(me.nickname)}`} className="font-medium hover:underline">
         {me.nickname}
       </Link>

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ClientPhotoFallback } from "@/components/ClientPhotoFallback";
 import { PhotoViewer } from "@/components/PhotoViewer";
 import { apiGet } from "@/lib/api";
 import { readFilters, toQuery } from "@/lib/filters";
@@ -18,10 +19,10 @@ export default function PhotoPage({ params, searchParams }: Props) {
 async function PhotoContent({ params, searchParams }: Pick<Props, "params" | "searchParams">) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   if (!/^\d{1,18}$/.test(id)) notFound();
-  const photo = await apiGet<PhotoDetail>(`/api/photos/${id}`);
-  if (!photo) notFound();
-
   // 기종 격자에서 고른 필터를 그대로 이어서, 옆으로 넘길 때도 같은 작례들 안에서 움직인다
   const query = toQuery(readFilters(sp));
+  const photo = await apiGet<PhotoDetail>(`/api/photos/${id}`);
+  // 신고로 가려진 작례는 올린 사람·관리자에게만 보인다. 서버는 로그인을 모르므로 브라우저에서 다시 찾는다
+  if (!photo) return <ClientPhotoFallback id={id} query={query} />;
   return <PhotoViewer key={photo.id} initial={photo} query={query} />;
 }

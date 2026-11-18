@@ -357,6 +357,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 - `isOriginalSize`(작례 상세·요약 공통): true면 원본 크기, false면 줄인 사진, null이면 알 수 없음. "원본 크기만" 필터에 쓰고, 화면에 따로 표시하지는 않는다.
 - 1600px보다 작은 사진은 `displayUrl`도 원래 크기 그대로다. 화면에서 늘리지 않는다.
 - 삭제됐거나 없으면 `404 PHOTO_NOT_FOUND`
+- **신고로 가려진 작례**는 올린 사람과 관리자에게만 보이고, 그 외에는 `404 PHOTO_NOT_FOUND`. 올린 사람에게는 `hiddenByReport: true`가 와서 안내를 보여준다.
 - `isMine`: 로그인한 사용자가 올린 작례면 true. 삭제 버튼 표시용
   - 프론트의 서버 렌더링은 로그인 쿠키 없이 부르므로 항상 false다. (쿠키를 넘기면 페이지를 사람마다 따로 만들어야 해서 캐시를 못 쓴다) 프론트가 브라우저에서 한 번 더 불러 확인한다.
 
@@ -456,8 +457,18 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 
 - `reason`: INAPPROPRIATE / STOLEN / PORTRAIT_RIGHTS / WRONG_CAMERA / OTHER
 - `detail`: 최대 500자. `OTHER`면 필수
+- **STOLEN·PORTRAIT_RIGHTS는 접수하는 즉시 작례를 가린다** (임시조치, PRD F8). 응답 `{ "hidden": true }`. 다른 사유는 `{ "hidden": false }`
+- 접수되면 운영 메일로 알림을 보낸다. (메일 실패는 신고 접수에 영향 없음)
 - 성공: `201`
-- 실패: `409 ALREADY_REPORTED`, `404 PHOTO_NOT_FOUND`, `400 CANNOT_REPORT_OWN_PHOTO`
+- 실패: `409 ALREADY_REPORTED`, `404 PHOTO_NOT_FOUND`, `400 CANNOT_REPORT_OWN_PHOTO`, `400 INVALID_REQUEST`(사유·설명 형식), `429 REPORT_RATE_LIMITED`(하루 10건 초과)
+
+### `GET /api/me/hidden-photos` — 신고로 가려진 내 작례 · 로그인
+
+올린 사람에게 알리는 용도. 본인 프로필 화면에서 부른다.
+
+```json
+{ "items": [ { "id": 1043, "thumbnailUrl": "…", "hiddenAt": "2026-11-18T10:00:00+09:00" } ] }
+```
 
 ## 6. 프로필
 
@@ -511,11 +522,16 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 
 | 메서드 | 경로 | 설명 |
 |---|---|---|
-| GET | `/api/admin/reports?status=PENDING` | 신고 목록 (오래된 것부터, 커서 페이지네이션) |
-| POST | `/api/admin/reports/{id}/resolve` | 처리. 본문 `{ "action": "DELETED" }` 또는 `{ "action": "CAMERA_CHANGED", "cameraId": 7 }` |
-| POST | `/api/admin/reports/{id}/reject` | 기각 |
+| GET | `/api/admin/reports` | 미처리 신고 목록. 작례별로 묶어 오래된 것부터 (작례 썸네일·가림 여부·사유별 건수·설명) |
+| POST | `/api/admin/reports/photos/{photoId}/delete` | 처리: 작례 삭제 |
+| POST | `/api/admin/reports/photos/{photoId}/change-camera` | 처리: 기종 변경. 본문 `{ "cameraSlug": "canon-ixus-30" }`. 가렸으면 다시 공개 |
+| POST | `/api/admin/reports/photos/{photoId}/reject` | 기각: 침해 아님. 가렸으면 다시 공개 |
 
-- 한 작례에 신고가 여러 건이면 처리할 때 같은 작례의 PENDING 신고를 함께 처리한다.
+- 그 작례에 미처리 신고가 없으면 `404 REPORT_NOT_FOUND`
+
+- 처리는 작례 단위다. 그 작례의 PENDING 신고를 모두 함께 처리한다.
+- 관리자 화면 `/admin/reports`가 이 API를 부른다. (PRD F8)
+- 권한은 요청마다 DB의 `users.role`로 확인한다. 관리자가 아니면 `403 FORBIDDEN`
 
 ### 미분류 작례
 
@@ -573,8 +589,10 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 | 403 | NOT_PHOTO_OWNER | 남의 작례 삭제 시도 |
 | 403 | CSRF_TOKEN_INVALID | CSRF 토큰 누락·불일치 |
 | 404 | BRAND_NOT_FOUND / CAMERA_NOT_FOUND / PHOTO_NOT_FOUND / USER_NOT_FOUND | |
+| 404 | REPORT_NOT_FOUND | 관리자 처리: 그 작례에 미처리 신고가 없음 |
 | 409 | NICKNAME_DUPLICATED | 닉네임 중복 |
 | 409 | ALREADY_REPORTED | 이미 신고함 |
+| 429 | REPORT_RATE_LIMITED | 하루 신고 10건 초과 |
 | 409 | EXIF_MODEL_ALREADY_MAPPED | EXIF 값이 이미 다른 기종에 연결됨 |
 | 409 | BATCH_ALREADY_RUNNING | 배치 실행 중 |
 | 413 | FILE_TOO_LARGE | 20MB 초과 |

@@ -51,7 +51,7 @@ npm run dev   # http://localhost:3000
 `main`에 push하거나 PR을 열면 GitHub Actions가 자동으로 돌린다. (`.github/workflows/ci.yml`)
 
 - 백엔드: `./gradlew test` (Testcontainers로 PostgreSQL을 띄워서)
-- 프론트: `npx tsc --noEmit`, `npm run lint`, `npm run build`
+- 프론트: `npx next typegen`(라우트 타입 생성) → `npx tsc --noEmit`, `npm run lint`, `npm run build`
 
 결과는 GitHub 저장소의 Actions 탭과 커밋 옆 체크 표시로 본다. 비밀 값은 쓰지 않는다.
 

@@ -51,7 +51,9 @@ export function AuthMenu() {
 
   return (
     <div className="flex items-center gap-3 text-sm">
-      <span className="font-medium">{me.nickname}</span>
+      <Link href={`/users/${encodeURIComponent(me.nickname)}`} className="font-medium hover:underline">
+        {me.nickname}
+      </Link>
       <button type="button" onClick={logout} className="text-muted hover:text-foreground">
         로그아웃
       </button>

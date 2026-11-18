@@ -297,7 +297,14 @@ function Credit({ photo }: { photo: PhotoDetail }) {
     );
   }
   if (photo.uploader) {
-    return <span>올린 사람: {photo.uploader.nickname}</span>;
+    return (
+      <span>
+        올린 사람:{" "}
+        <Link href={`/users/${encodeURIComponent(photo.uploader.nickname)}`} className="underline">
+          {photo.uploader.nickname}
+        </Link>
+      </span>
+    );
   }
   return null;
 }

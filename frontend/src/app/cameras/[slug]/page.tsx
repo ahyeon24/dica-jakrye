@@ -70,7 +70,13 @@ async function CameraContent({ params, searchParams }: Pick<Props, "params" | "s
       </div>
 
       {/* 필터가 바뀌면 격자를 새로 시작한다 */}
-      <PhotoGrid key={query} slug={camera.slug} query={query} initial={firstPage} />
+      <PhotoGrid
+        key={query}
+        endpoint={`/api/cameras/${encodeURIComponent(camera.slug)}/photos`}
+        query={query}
+        initial={firstPage}
+        empty={{ title: "아직 작례가 없어요", hint: "이 카메라로 찍은 원본 사진이 있다면 첫 작례를 올려주세요." }}
+      />
     </div>
   );
 }

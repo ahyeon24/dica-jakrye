@@ -22,6 +22,7 @@ public enum ErrorCode {
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "브랜드를 찾을 수 없어요."),
     CAMERA_NOT_FOUND(HttpStatus.NOT_FOUND, "기종을 찾을 수 없어요."),
     PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "작례를 찾을 수 없어요."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없어요."),
     FILE_TOO_LARGE(HttpStatus.CONTENT_TOO_LARGE, "20MB보다 큰 파일은 올릴 수 없어요."),
     UPLOAD_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "한 시간에 올릴 수 있는 사진 수를 넘었어요. 잠시 후 다시 올려 주세요."),
     UPLOAD_BUSY(HttpStatus.SERVICE_UNAVAILABLE, "지금 올리는 사람이 많아요. 잠시 후 다시 시도해 주세요."),

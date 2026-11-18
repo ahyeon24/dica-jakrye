@@ -474,6 +474,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 ```
 
 - 탈퇴했거나 없으면 `404 USER_NOT_FOUND`
+- `isMe`: 프론트의 서버 렌더링은 로그인 쿠키 없이 부르므로 항상 false다. 내 프로필 전용 버튼(작례 올리기·설정)은 프론트가 브라우저에서 `/api/me`로 확인해 보여준다.
 
 ### `GET /api/users/{nickname}/photos` — 프로필 피드 · 공개
 

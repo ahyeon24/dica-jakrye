@@ -1,5 +1,6 @@
 package com.dicajakrye.user;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -36,6 +37,20 @@ public class UserQueries {
                 .param("provider", provider)
                 .param("pid", providerUserId)
                 .query(UserRow.class)
+                .optional();
+    }
+
+    public record ProfileRow(long id, String nickname, String profileImageKey, OffsetDateTime createdAt) {
+    }
+
+    /** 공개 프로필. 탈퇴한 회원은 없는 것으로 본다 */
+    public Optional<ProfileRow> findProfile(String nickname) {
+        return jdbc.sql("""
+                        SELECT id, nickname, profile_image_key, created_at
+                          FROM users WHERE nickname = :n AND deleted_at IS NULL
+                        """)
+                .param("n", nickname)
+                .query(ProfileRow.class)
                 .optional();
     }
 

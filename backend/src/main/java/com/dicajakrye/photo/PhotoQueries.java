@@ -4,6 +4,7 @@ import com.dicajakrye.common.Cursor;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,49 @@ public class PhotoQueries {
         public String credit() {
             return uploaderNickname != null ? uploaderNickname : commonsAuthor;
         }
+    }
+
+    /** 기종 정보까지 담은 요약 한 줄 (홈·프로필처럼 여러 기종이 섞인 목록용). 미분류면 camera* 가 null */
+    public record PhotoListRow(long id, String source, String thumbnailKey, Integer width, Integer height,
+                               Boolean flashFired, Boolean isOriginalSize, OffsetDateTime createdAt,
+                               String uploaderNickname, String commonsAuthor,
+                               String cameraSlug, String cameraName, String cameraNameKo) {
+
+        public String credit() {
+            return uploaderNickname != null ? uploaderNickname : commonsAuthor;
+        }
+    }
+
+    /** 홈 "최근 올라온 작례": 사용자 업로드 중 기종이 정해진 것만 (API.md 3장) */
+    public List<PhotoListRow> recentUploads(Cursor cursor, int limit) {
+        return list("p.source = 'UPLOAD' AND p.camera_id IS NOT NULL", Map.of(), cursor, limit);
+    }
+
+    /** 프로필 피드: 그 사람이 올린 작례 전부. 미분류도 포함 (API.md 6장) */
+    public List<PhotoListRow> byUploader(long uploaderId, Cursor cursor, int limit) {
+        return list("p.uploader_id = :uploaderId", Map.of("uploaderId", uploaderId), cursor, limit);
+    }
+
+    private List<PhotoListRow> list(String where, Map<String, Object> params, Cursor cursor, int limit) {
+        StringBuilder sql = new StringBuilder("""
+                SELECT p.id, p.source, p.thumbnail_key, p.width, p.height, p.flash_fired, p.is_original_size,
+                       p.created_at, u.nickname AS uploader_nickname, m.author AS commons_author,
+                       c.slug AS camera_slug, c.name AS camera_name, c.name_ko AS camera_name_ko
+                  FROM photo p
+                  LEFT JOIN users u ON u.id = p.uploader_id
+                  LEFT JOIN commons_meta m ON m.photo_id = p.id
+                  LEFT JOIN camera c ON c.id = p.camera_id
+                 WHERE p.deleted_at IS NULL AND\s""").append(where);
+        if (cursor != null) {
+            sql.append(" AND (p.created_at < :cursorAt OR (p.created_at = :cursorAt AND p.id < :cursorId))");
+        }
+        sql.append(" ORDER BY p.created_at DESC, p.id DESC LIMIT :limit");
+        var spec = jdbc.sql(sql.toString()).params(params).param("limit", limit);
+        if (cursor != null) {
+            spec = spec.param("cursorAt", OffsetDateTime.ofInstant(cursor.createdAt(), ZoneOffset.UTC))
+                    .param("cursorId", cursor.id());
+        }
+        return spec.query(PhotoListRow.class).list();
     }
 
     /**

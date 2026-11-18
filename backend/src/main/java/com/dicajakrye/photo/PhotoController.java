@@ -3,6 +3,7 @@ package com.dicajakrye.photo;
 import com.dicajakrye.auth.CurrentUser;
 import com.dicajakrye.common.ApiException;
 import com.dicajakrye.common.ErrorCode;
+import com.dicajakrye.common.PageResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +19,19 @@ public class PhotoController {
 
     private final PhotoService photoService;
     private final PhotoDeleteService deleteService;
+    private final PhotoListService listService;
 
-    public PhotoController(PhotoService photoService, PhotoDeleteService deleteService) {
+    public PhotoController(PhotoService photoService, PhotoDeleteService deleteService, PhotoListService listService) {
         this.photoService = photoService;
         this.deleteService = deleteService;
+        this.listService = listService;
+    }
+
+    /** 홈의 최근 올라온 작례 (사용자 업로드, 기종이 정해진 것만) */
+    @GetMapping("/recent")
+    public PageResponse<PhotoSummaryResponse> recent(@RequestParam(required = false) String cursor,
+                                                     @RequestParam(defaultValue = "" + PhotoListService.DEFAULT_PAGE_SIZE) int size) {
+        return listService.recent(cursor, size);
     }
 
     @GetMapping("/{id}")

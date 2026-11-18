@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { CameraSearch } from "@/components/CameraSearch";
+import { PhotoGrid } from "@/components/PhotoGrid";
 import { apiGet } from "@/lib/api";
-import type { BrandItem } from "@/lib/types";
+import type { BrandItem, Page, PhotoSummary } from "@/lib/types";
 
 export default function Home() {
   return (
@@ -21,7 +22,9 @@ export default function Home() {
         </Suspense>
       </section>
 
-      {/* 최근 올라온 작례는 업로드 기능을 만든 뒤에 붙인다 (PRD F1) */}
+      <Suspense fallback={null}>
+        <RecentPhotos />
+      </Suspense>
     </div>
   );
 }
@@ -42,5 +45,17 @@ async function BrandList() {
         </Link>
       ))}
     </div>
+  );
+}
+
+/** 최근 올라온 작례 (사용자 업로드). 아직 없으면 영역을 숨긴다 (API.md 3장) */
+async function RecentPhotos() {
+  const page = await apiGet<Page<PhotoSummary>>("/api/photos/recent");
+  if (!page || page.items.length === 0) return null;
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-bold">최근 올라온 작례</h2>
+      <PhotoGrid endpoint="/api/photos/recent" initial={page} />
+    </section>
   );
 }

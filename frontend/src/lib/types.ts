@@ -55,7 +55,7 @@ export type PhotoSummary = {
   height: number | null;
   flashFired: boolean | null;
   isOriginalSize: boolean | null;
-  camera: { slug: string; name: string; nameKo: string | null };
+  camera: { slug: string; name: string; nameKo: string | null } | null; // 미분류면 null (프로필)
   credit: string | null;
 };
 
@@ -111,4 +111,12 @@ export type SignupInfo = {
   provider: "GOOGLE" | "KAKAO";
   terms: { type: "TERMS_OF_SERVICE" | "PRIVACY_COLLECTION"; version: string; url: string }[];
   redirect: string;
+};
+
+export type Profile = {
+  nickname: string;
+  profileImageUrl: string | null;
+  photoCount: number;
+  joinedAt: string;
+  isMe: boolean; // 서버 렌더링에서는 쿠키 없이 받아 항상 false. 화면에서는 /api/me로 다시 확인
 };

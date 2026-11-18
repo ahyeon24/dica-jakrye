@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/api/me", "/api/me/**", "/api/cameras/exif-match").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/photos").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/photos/*").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> SecurityErrors.write(res, ErrorCode.UNAUTHORIZED))

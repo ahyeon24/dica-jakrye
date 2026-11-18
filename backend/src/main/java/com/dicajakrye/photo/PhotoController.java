@@ -1,7 +1,10 @@
 package com.dicajakrye.photo;
 
 import com.dicajakrye.auth.CurrentUser;
+import com.dicajakrye.common.ApiException;
+import com.dicajakrye.common.ErrorCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PhotoController {
 
     private final PhotoService photoService;
+    private final PhotoDeleteService deleteService;
 
-    public PhotoController(PhotoService photoService) {
+    public PhotoController(PhotoService photoService, PhotoDeleteService deleteService) {
         this.photoService = photoService;
+        this.deleteService = deleteService;
     }
 
     @GetMapping("/{id}")
@@ -30,6 +35,14 @@ public class PhotoController {
                                                   @RequestParam(required = false) Boolean flash,
                                                   @RequestParam(defaultValue = "false") boolean originalOnly) {
         return photoService.adjacent(id, flash, originalOnly, CurrentUser.id().orElse(null));
+    }
+
+    /** 내 작례 삭제 */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable long id) {
+        long userId = CurrentUser.id().orElseThrow(() -> new ApiException(ErrorCode.UNAUTHORIZED));
+        deleteService.deleteOwn(id, userId);
+        return ResponseEntity.noContent().build();
     }
 
     /** 상세 페이지가 브라우저에서 열릴 때 프론트가 부른다 */

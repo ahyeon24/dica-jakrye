@@ -358,6 +358,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 - 1600px보다 작은 사진은 `displayUrl`도 원래 크기 그대로다. 화면에서 늘리지 않는다.
 - 삭제됐거나 없으면 `404 PHOTO_NOT_FOUND`
 - `isMine`: 로그인한 사용자가 올린 작례면 true. 삭제 버튼 표시용
+  - 프론트의 서버 렌더링은 로그인 쿠키 없이 부르므로 항상 false다. (쿠키를 넘기면 페이지를 사람마다 따로 만들어야 해서 캐시를 못 쓴다) 프론트가 브라우저에서 한 번 더 불러 확인한다.
 
 ### `GET /api/photos/{id}/adjacent?flash=true&originalOnly=true` — 이전·다음 작례 · 공개
 
@@ -438,7 +439,9 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 
 ### `DELETE /api/photos/{id}` — 내 작례 삭제 · 로그인
 
-- 본인이 올린 작례만 삭제할 수 있다. R2 파일도 지운다.
+- 본인이 올린 작례만 삭제할 수 있다. Commons 작례는 올린 사람이 없으므로 관리자만 지운다.
+- DB 행은 남기고 `deleted_at`을 채운다(신고 기록이 참조). 보기용·썸네일·원본 파일은 실제로 지운다.
+- DB를 먼저 바꾸고 파일을 지운다. 파일 삭제가 실패해도 작례는 이미 보이지 않고, 남은 파일은 나중에 정리 배치가 지운다.
 - 성공: `204`
 - 실패: `403 NOT_PHOTO_OWNER`, `404 PHOTO_NOT_FOUND`
 

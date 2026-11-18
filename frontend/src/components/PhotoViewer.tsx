@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { apiSend } from "@/lib/client";
+import { apiSend, ClientApiError } from "@/lib/client";
 import { cameraTitle } from "@/lib/format";
 import type { Adjacent, PhotoDetail } from "@/lib/types";
 
@@ -18,6 +19,7 @@ type Neighbors = { prev: PhotoDetail | null | undefined; next: PhotoDetail | nul
  * 넘길 때 페이지를 새로 불러오지 않고 주소만 바꾼다(replaceState). 뒤로 가기는 기종 격자로 간다.
  */
 export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: string }) {
+  const router = useRouter();
   const [current, setCurrent] = useState(initial);
   const [neighbors, setNeighbors] = useState<Neighbors>({ prev: undefined, next: undefined });
   const stripRef = useRef<HTMLDivElement>(null);
@@ -26,6 +28,19 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
 
   const slides = [neighbors.prev, current, neighbors.next].filter((p): p is PhotoDetail => !!p);
   const currentIndex = neighbors.prev ? 1 : 0;
+
+  // 서버 렌더링은 로그인 쿠키 없이 받아 와서 isMine이 항상 false다. 브라우저에서 한 번 더 받아 내 작례인지 확인한다.
+  // (넘겨서 보는 이웃 작례는 브라우저가 받아 오므로 이미 맞는 값이다)
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`/api/photos/${initial.id}`, { signal: controller.signal })
+      .then((res) => (res.ok ? (res.json() as Promise<PhotoDetail>) : null))
+      .then((fresh) => {
+        if (fresh?.isMine) setCurrent((cur) => (cur.id === fresh.id ? { ...cur, isMine: true } : cur));
+      })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [initial.id]);
 
   // 이전·다음 작례 불러오기
   useEffect(() => {
@@ -96,19 +111,27 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
   }, [slideTo]);
 
   const exifRows = exifList(current);
+  const backHref = current.camera ? `/cameras/${current.camera.slug}${query ? `?${query}` : ""}` : "/";
+
+  async function deleteCurrent() {
+    await apiSend("DELETE", `/api/photos/${current.id}`);
+    router.replace(backHref);
+    router.refresh();
+  }
 
   return (
     <div className="space-y-4">
-      {current.camera ? (
-        <Link
-          href={`/cameras/${current.camera.slug}${query ? `?${query}` : ""}`}
-          className="text-sm text-muted hover:text-foreground"
-        >
-          ← {current.camera.brandName} {cameraTitle(current.camera.name, current.camera.nameKo)}
-        </Link>
-      ) : (
-        <span className="text-sm text-muted">미분류 작례</span>
-      )}
+      <div className="flex items-center justify-between gap-2">
+        {current.camera ? (
+          <Link href={backHref} className="text-sm text-muted hover:text-foreground">
+            ← {current.camera.brandName} {cameraTitle(current.camera.name, current.camera.nameKo)}
+          </Link>
+        ) : (
+          <span className="text-sm text-muted">미분류 작례</span>
+        )}
+        {/* ⋯ 메뉴: 내 작례면 삭제하기. 신고하기는 신고 기능을 만들 때 추가 (와이어프레임 3쪽) */}
+        {current.isMine && <PhotoMenu key={current.id} onDelete={deleteCurrent} />}
+      </div>
 
       <figure className="space-y-2">
         <div className="relative aspect-[4/3] max-h-[80vh] w-full bg-line/40">
@@ -138,6 +161,79 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
             </div>
           ))}
         </dl>
+      )}
+    </div>
+  );
+}
+
+/** ⋯ 메뉴. 삭제는 되돌릴 수 없어서 한 번 더 확인한다 */
+function PhotoMenu({ onDelete }: { onDelete: () => Promise<void> }) {
+  const [open, setOpen] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function confirmDelete() {
+    setBusy(true);
+    setError(null);
+    try {
+      await onDelete();
+    } catch (e) {
+      setError(e instanceof ClientApiError ? e.message : "지우지 못했어요. 다시 시도해 주세요.");
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        aria-label="작례 메뉴"
+        aria-expanded={open}
+        onClick={() => {
+          setOpen((v) => !v);
+          setConfirming(false);
+          setError(null);
+        }}
+        className="rounded px-2 text-lg leading-none text-muted hover:text-foreground"
+      >
+        ⋯
+      </button>
+      {open && (
+        <div className="absolute right-0 z-20 mt-1 w-56 rounded-lg border border-line bg-card p-1 text-sm shadow-lg">
+          {!confirming ? (
+            <button
+              type="button"
+              onClick={() => setConfirming(true)}
+              className="w-full rounded px-3 py-2 text-left text-red-600 hover:bg-background"
+            >
+              삭제하기
+            </button>
+          ) : (
+            <div className="space-y-2 p-2">
+              <p>이 작례를 지울까요? 되돌릴 수 없어요.</p>
+              {error && <p className="text-xs text-red-600">{error}</p>}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={confirmDelete}
+                  disabled={busy}
+                  className="flex-1 rounded bg-red-600 py-1.5 font-medium text-white disabled:opacity-50"
+                >
+                  {busy ? "지우는 중…" : "지우기"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirming(false)}
+                  disabled={busy}
+                  className="flex-1 rounded border border-line py-1.5"
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

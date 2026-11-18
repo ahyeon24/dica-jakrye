@@ -16,6 +16,7 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요해요."),
     SIGNUP_SESSION_NOT_FOUND(HttpStatus.UNAUTHORIZED, "가입 시간이 지났어요. 다시 로그인해 주세요."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없어요."),
+    NOT_PHOTO_OWNER(HttpStatus.FORBIDDEN, "내가 올린 작례만 지울 수 있어요."),
     CSRF_TOKEN_INVALID(HttpStatus.FORBIDDEN, "요청을 확인하지 못했어요. 새로고침 후 다시 시도해 주세요."),
     NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "이미 쓰고 있는 닉네임이에요."),
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "브랜드를 찾을 수 없어요."),

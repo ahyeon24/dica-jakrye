@@ -184,12 +184,69 @@ class UploadApiTest {
                 .param("model", "x").exchange()).hasStatus(401);
     }
 
+    @Test
+    void 내_작례를_지우면_화면에서_사라지고_파일도_지워진다() throws Exception {
+        Cookie me = login("디카러버");
+        long id = uploadedId(upload(me, UploadTestImages.digicamJpeg(400, 300, "Canon", "Canon DIGITAL IXUS 30", 1, false), true));
+        var keys = jdbc.sql("SELECT display_key, thumbnail_key, original_key FROM photo WHERE id = :id").param("id", id)
+                .query((rs, i) -> new String[]{rs.getString(1), rs.getString(2), rs.getString(3)}).single();
+
+        assertThat(mvc.delete().uri("/api/photos/{id}", id).cookie(me).with(csrf()).exchange()).hasStatus(204);
+
+        assertThat(mvc.get().uri("/api/photos/{id}", id).exchange()).hasStatus(404);
+        assertThat(mvc.get().uri("/api/cameras/canon-ixus-30/photos").exchange())
+                .bodyJson().extractingPath("$.items[?(@.id == " + id + ")]").asArray().isEmpty();
+        assertThat(Files.exists(storageDir.resolve("public").resolve(keys[0]))).isFalse();
+        assertThat(Files.exists(storageDir.resolve("public").resolve(keys[1]))).isFalse();
+        assertThat(Files.exists(storageDir.resolve("private").resolve(keys[2]))).isFalse();
+        // 신고 기록이 참조할 수 있어 행은 남기고 deleted_at만 채운다
+        assertThat(jdbc.sql("SELECT deleted_at IS NOT NULL FROM photo WHERE id = :id").param("id", id)
+                .query(Boolean.class).single()).isTrue();
+        // 두 번 지우면 404
+        assertThat(mvc.delete().uri("/api/photos/{id}", id).cookie(me).with(csrf()).exchange()).hasStatus(404);
+    }
+
+    @Test
+    void 남의_작례와_Commons_작례는_지울_수_없다() {
+        Cookie owner = login("디카러버");
+        Cookie other = login("똑딱이");
+        long id = uploadedId(upload(owner, UploadTestImages.digicamJpeg(400, 300, "Canon", "Canon DIGITAL IXUS 30", 1, false), true));
+
+        MvcTestResult r = mvc.delete().uri("/api/photos/{id}", id).cookie(other).with(csrf()).exchange();
+        assertThat(r).hasStatus(403);
+        assertThat(r).bodyJson().extractingPath("$.code").isEqualTo("NOT_PHOTO_OWNER");
+        assertThat(mvc.get().uri("/api/photos/{id}", id).exchange()).hasStatusOk();
+
+        long commonsId = jdbc.sql("""
+                        INSERT INTO photo (source, camera_id, display_key, thumbnail_key)
+                        VALUES ('COMMONS', (SELECT id FROM camera WHERE slug = 'canon-ixus-30'), 'commons/display/1.jpg', 'commons/thumb/1.jpg')
+                        RETURNING id
+                        """).query(Long.class).single();
+        try {
+            assertThat(mvc.delete().uri("/api/photos/{id}", commonsId).cookie(owner).with(csrf()).exchange()).hasStatus(403);
+        } finally {
+            jdbc.sql("DELETE FROM photo WHERE id = :id").param("id", commonsId).update();
+        }
+
+        assertThat(mvc.delete().uri("/api/photos/{id}", id).with(csrf()).exchange()).hasStatus(401);
+        assertThat(mvc.delete().uri("/api/photos/{id}", id).cookie(owner).exchange()).hasStatus(403); // CSRF 없음
+    }
+
     // ---------- 도우미 ----------
 
     private Cookie login(String nickname) {
         long userId = jdbc.sql("INSERT INTO users (provider, provider_user_id, nickname) VALUES ('GOOGLE', :n, :n) RETURNING id")
                 .param("n", nickname).query(Long.class).single();
         return TestSessions.loggedIn(sessions, userId);
+    }
+
+    private long uploadedId(MvcTestResult r) {
+        assertThat(r).hasStatus(201);
+        try {
+            return Long.parseLong(com.jayway.jsonpath.JsonPath.read(r.getResponse().getContentAsString(), "$.id").toString());
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private MvcTestResult upload(Cookie session, byte[] file, boolean agreed) {

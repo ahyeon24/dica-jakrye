@@ -41,13 +41,14 @@ public class UploadPhotoWriter {
         params.put("originalKey", p.originalKey());
         params.put("displayKey", p.displayKey());
         params.put("thumbKey", p.thumbnailKey());
+        params.put("makerModelId", p.exif().makerModelId());
         return jdbc.sql("""
                         INSERT INTO photo (source, uploader_id, camera_id, exif_make_raw, exif_model_raw, exif_make, exif_model,
                                            flash_fired, taken_at, f_number, exposure_time, iso, focal_length,
-                                           width, height, is_original_size, original_key, display_key, thumbnail_key)
+                                           width, height, is_original_size, original_key, display_key, thumbnail_key, maker_model_id)
                         VALUES ('UPLOAD', :uploader, :camera, :makeRaw, :modelRaw, :make, :model,
                                 :flash, :takenAt, :fNumber, :exposure, :iso, :focal,
-                                :width, :height, :orig, :originalKey, :displayKey, :thumbKey)
+                                :width, :height, :orig, :originalKey, :displayKey, :thumbKey, :makerModelId)
                         RETURNING id
                         """)
                 .params(params)

@@ -56,6 +56,7 @@ BRANDS = [  # (slug, name, name_ko)
 # 기종: brand, slug, name, name_ko, sensor, (native_w, native_h), 추가 별칭, EXIF (make, model), Commons 분류
 # - 대표 이름·한글 이름은 자동으로 별칭에 들어간다.
 # - EXIF는 Commons 표본에서 실제로 나온 값만. 확인 안 된 값(예: 다른 카메라일 수 있는 IXY 이름)은 넣지 않는다.
+#   (2026-11-19 캐논 내부 번호로 확인한 IXY 40·50·510 IS와 기종별 번호는 V5__maker_model_id.sql에 있다. V2는 그대로 둔다)
 # - 출시연도는 아직 조사하지 않아 비워 둔다.
 CAMERAS = [
     # 캐논

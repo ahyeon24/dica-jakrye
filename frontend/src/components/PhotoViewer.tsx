@@ -143,6 +143,17 @@ export function PhotoViewer({ initial, query }: { initial: PhotoDetail; query: s
         />
       </div>
 
+      {/* 내가 올린 미분류 작례: 왜 목록에 안 보이는지 알려 준다 (PRD F5) */}
+      {current.isMine && !current.camera && (
+        <div className="rounded-lg border border-line bg-line/30 p-3 text-sm">
+          <p className="font-medium">기종 확인 중인 작례예요.</p>
+          <p className="mt-1 text-muted">
+            아직 등록되지 않은 기종이라 지금은 내 프로필에서만 보여요. 운영자가 기종을 확인해 연결하면 기종 페이지와 최근
+            올라온 작례에도 나와요.
+          </p>
+        </div>
+      )}
+
       {current.hiddenByReport && (
         <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
           <p className="font-medium">신고가 들어와 임시로 가려진 작례예요.</p>

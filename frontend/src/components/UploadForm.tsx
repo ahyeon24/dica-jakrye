@@ -175,8 +175,11 @@ export function UploadForm() {
               </>
             ) : (
               <>
-                <p className="font-medium">아직 등록되지 않은 기종이에요</p>
-                <p className="text-muted">올리면 내 작례로 먼저 보이고, 확인 후 기종 페이지에 추가돼요.</p>
+                <p className="font-medium">아직 등록되지 않은 기종 같아요</p>
+                <p className="text-muted">
+                  올리면 서버가 한 번 더 찾아봐요. 그래도 못 찾으면 내 프로필에만 먼저 보이고, 운영자가 기종을 확인한
+                  뒤 기종 페이지와 최근 올라온 작례에 나와요.
+                </p>
               </>
             )}
             <p className="mt-1 text-xs text-muted">

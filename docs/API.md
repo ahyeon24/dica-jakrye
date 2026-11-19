@@ -422,7 +422,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 서버 처리:
 1. 파일 내용으로 JPEG인지 확인 (확장자·Content-Type은 믿지 않음). 헤더에서 가로·세로를 먼저 읽어 4,000만 픽셀을 넘으면 거부
 2. EXIF 읽기 → 제조사·모델 없으면 거부
-3. 기종 매칭 (없으면 미분류)
+3. 기종 매칭: EXIF 모델명(`camera_exif_model`) → 못 찾으면 캐논 내부 번호(`camera_maker_model`, ERD 3.4.2) → 그래도 없으면 미분류
 4. 썸네일(640px)·보기용(1600px)은 EXIF를 모두 지워 공개 버킷에, 원본은 GPS만 지워 비공개 버킷에 저장 (ARCHITECTURE.md 3.1)
 5. `photo` 저장
 
@@ -537,11 +537,46 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 
 | 메서드 | 경로 | 설명 |
 |---|---|---|
-| GET | `/api/admin/unclassified` | EXIF (제조사, 모델)별 미분류 작례 수. 많은 것부터 |
-| POST | `/api/admin/exif-models` | 연결. 본문 `{ "exifMake": "Canon", "exifModel": "Canon DIGITAL IXUS 30", "cameraId": 7 }` → 같은 값의 미분류 작례를 전부 그 기종으로 옮기고 옮긴 개수 반환 |
+| GET | `/api/admin/unclassified` | EXIF (제조사, 모델)별 미분류 작례 묶음. 많은 것부터 (최대 200묶음) |
+| POST | `/api/admin/exif-models` | 연결. 기존 기종에 붙이거나 새 기종을 만들어 붙인다 |
 
-- 서버가 정규화해서 저장하므로 원문을 그대로 보내면 된다.
-- 이미 다른 기종에 연결된 EXIF 값이면 `409 EXIF_MODEL_ALREADY_MAPPED`
+`GET /api/admin/unclassified` 응답 (배열):
+
+```json
+[{
+  "exifMake": "Canon", "exifModel": "Canon IXY DIGITAL 999",
+  "count": 3, "lastUploadedAt": "2026-11-19T12:00:00+09:00",
+  "makerModelId": "0x01550000",
+  "maxWidth": 2048, "maxHeight": 1536,
+  "brandSlug": "canon",
+  "samples": [{ "id": 2332, "thumbnailUrl": "..." }],
+  "candidates": [{ "slug": "canon-ixus-30", "name": "IXUS 30", "nameKo": "익서스 30", "brandName": "Canon", "reason": "MAKER_MODEL_ID" }]
+}]
+```
+
+- `makerModelId`: 묶음의 사진이 캐논 내부 번호 하나만 가지고 있을 때만. 없거나 여러 개면 null
+- `brandSlug`: EXIF 제조사에 브랜드 이름이 들어 있으면 그 브랜드 (`eastman kodak company` → `kodak`). 새 기종 만들 때 기본값
+- `samples`: 최근 작례 4장까지
+- `candidates`: 연결할 기종 후보. 판단은 관리자가 한다.
+  - `MAKER_MODEL_ID`: 같은 캐논 내부 번호로 등록된 기종 (가장 믿을 만함)
+  - `SIMILAR_NAME`: 같은 브랜드에서 숫자가 들어간 이름 조각("145", "s630", "t10")이 겹치는 기종, 최대 3개. 숫자 없이 "ixus"만 겹치는 건 후보로 보지 않는다.
+
+`POST /api/admin/exif-models` 본문 — `cameraSlug`와 `newCamera` 중 하나만:
+
+```json
+{ "exifMake": "Canon", "exifModel": "Canon IXY DIGITAL 999", "cameraSlug": "canon-ixus-30" }
+{ "exifMake": "Canon", "exifModel": "Canon IXUS 145",
+  "newCamera": { "brandSlug": "canon", "name": "IXUS 145", "nameKo": "익서스 145", "sensorType": "CCD",
+                 "nativeWidth": 4608, "nativeHeight": 3456, "releaseYear": 2014 } }
+```
+
+- 응답: `{ "cameraSlug": "canon-ixus-145", "moved": 1 }` (옮긴 작례 수)
+- 한 트랜잭션에서: (새 기종이면 기종·검색 별칭 추가) → EXIF 모델명 등록 → 묶음의 캐논 내부 번호가 하나면 그 번호도 등록 → 같은 EXIF 모델명 또는 같은 내부 번호의 미분류 작례를 옮기고 원본 크기 여부를 새로 계산
+- 다음부터 같은 모델명·내부 번호로 올라오는 사진은 자동으로 그 기종에 붙는다.
+- 새 기종: `name`(브랜드 빼고, 100자) 필수. 주소 이름은 `브랜드-이름`으로 만든다 (`canon-ixus-145`). `nameKo`, `sensorType`(CCD·CMOS), 원래 해상도(가로·세로 같이), `releaseYear`는 선택
+- 서버가 정규화해서 저장하므로 EXIF 원문을 그대로 보내면 된다.
+- 실패: 이미 다른 기종에 연결된 EXIF 값 `409 EXIF_MODEL_ALREADY_MAPPED`, 같은 이름·주소의 기종이 있음 `409 CAMERA_ALREADY_EXISTS`, 없는 기종·브랜드 `404`, 둘 다 보내거나 둘 다 안 보냄·잘못된 값 `400 INVALID_REQUEST`
+- 관리자 화면 `/admin/unclassified`가 이 API를 부른다.
 
 ### 브랜드·기종
 
@@ -594,6 +629,7 @@ Commons 작례면 `uploader`가 null이고 `commons`가 채워진다. 이미지 
 | 409 | ALREADY_REPORTED | 이미 신고함 |
 | 429 | REPORT_RATE_LIMITED | 하루 신고 10건 초과 |
 | 409 | EXIF_MODEL_ALREADY_MAPPED | EXIF 값이 이미 다른 기종에 연결됨 |
+| 409 | CAMERA_ALREADY_EXISTS | 관리자 기종 추가: 같은 브랜드에 같은 이름, 또는 같은 주소 이름의 기종이 있음 |
 | 409 | BATCH_ALREADY_RUNNING | 배치 실행 중 |
 | 413 | FILE_TOO_LARGE | 20MB 초과 |
 | 429 | UPLOAD_RATE_LIMITED | 업로드 횟수 초과 |

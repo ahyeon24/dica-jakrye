@@ -71,7 +71,7 @@ class CommonsCollectorTest {
         for (int i = 1; i <= 3; i++) {
             list.add(file(2000 + i, "<b>작가 B</b>", "CC BY 2.0", "Canon PowerShot SD200", 1600, 1200));
         }
-        list.add(file(3001, "작가 C", "CC BY 2.0", "Canon IXY DIGITAL 40", 2048, 1536)); // 다른 카메라
+        list.add(file(3001, "작가 C", "CC BY 2.0", "Canon IXY DIGITAL 110 IS", 2048, 1536)); // 이름은 비슷해도 다른 카메라 (CAMERAS.md 6장)
         list.add(file(3002, "작가 D", "GFDL", "Canon DIGITAL IXUS 30", 2048, 1536));      // 라이선스
         list.add(file(3003, "작가 E", "CC0", "Canon DIGITAL IXUS 30", 300, 225));          // 너무 작음
         fake.files.put("Canon Digital IXUS 30", list);

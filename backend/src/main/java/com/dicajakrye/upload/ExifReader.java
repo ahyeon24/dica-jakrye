@@ -6,6 +6,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
 import java.io.ByteArrayInputStream;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,21 @@ public class ExifReader {
                 ExifValues.exposure(string(sub, ExifSubIFDDirectory.TAG_EXPOSURE_TIME)),
                 ExifValues.integer(string(sub, ExifSubIFDDirectory.TAG_ISO_EQUIVALENT)),
                 ExifValues.decimal(string(sub, ExifSubIFDDirectory.TAG_FOCAL_LENGTH), 1),
-                orientation == null ? 1 : orientation));
+                orientation == null ? 1 : orientation,
+                makerModelId(metadata)));
+    }
+
+    /**
+     * 캐논 MakerNote의 Canon Model ID. 나라별 이름(IXUS·IXY·PowerShot SD)이 달라도 같은 기종이면 같다.
+     * 다른 제조사는 쓸 만한 번호가 없어 읽지 않는다. (docs/CAMERAS.md 6장)
+     */
+    static Long makerModelId(Metadata metadata) {
+        CanonMakernoteDirectory canon = metadata.getFirstDirectoryOfType(CanonMakernoteDirectory.class);
+        if (canon == null || !canon.containsTag(CanonMakernoteDirectory.TAG_MODEL_ID)) {
+            return null;
+        }
+        Long id = canon.getLongObject(CanonMakernoteDirectory.TAG_MODEL_ID);
+        return id == null || id == 0 ? null : id;
     }
 
     private static String string(Directory dir, int tag) {

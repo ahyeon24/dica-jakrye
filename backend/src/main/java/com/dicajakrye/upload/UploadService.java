@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 /**
  * 작례 올리기 (ARCHITECTURE.md 3.1, SECURITY.md 5장)
  * 1. 내용으로 JPEG인지 확인 → 헤더에서 크기 확인(4,000만 화소 초과 거부)
- * 2. EXIF 읽기 (제조사·모델 없으면 거부) → 기종 찾기 (없으면 미분류)
+ * 2. EXIF 읽기 (제조사·모델 없으면 거부) → 기종 찾기: 모델명, 그다음 캐논 내부 번호 (없으면 미분류)
  * 3. 보기용·썸네일: 새로 인코딩해서 EXIF 전부 없음, 공개 저장소
  *    원본: GPS·XMP만 지움, 비공개 저장소
  * 4. DB 저장. 실패하면 올린 파일을 지운다
@@ -95,7 +95,7 @@ public class UploadService {
             throw new ApiException(ErrorCode.IMAGE_DIMENSIONS_TOO_LARGE);
         }
         ExifInfo exif = exifReader.read(file).orElseThrow(() -> new ApiException(ErrorCode.EXIF_NOT_FOUND));
-        Match camera = cameraMatcher.find(exif.makeRaw(), exif.modelRaw()).orElse(null);
+        Match camera = cameraMatcher.find(exif.makeRaw(), exif.modelRaw(), exif.makerModelId()).orElse(null);
 
         Processed processed;
         byte[] original;

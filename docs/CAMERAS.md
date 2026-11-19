@@ -27,11 +27,13 @@
 **캐논은 나라별 이름이 제각각이고, 내가 알던 대응이 일부 틀렸다**
 - 같은 카메라가 유럽은 IXUS, 미국은 PowerShot SD·ELPH, 일본은 IXY로 팔렸다.
 - Commons 사진의 EXIF로 확인된 대응: IXUS 55 = IXY 60, IXUS 60 = IXY 70, IXUS 70 = IXY 10, IXUS 75 = IXY 90, IXUS 750 = IXY 700, IXUS 800 IS = IXY 800 IS, IXUS 110 IS = PowerShot SD960 IS
+- 캐논 내부 번호로 추가 확인(2026-11-19, 아래 "캐논 내부 번호"): IXUS 30 = **IXY 40**, IXUS 40 = **IXY 50**, IXUS 110 IS = **IXY 510 IS**
 - 처음엔 IXUS 55 = IXY 55처럼 잘못 짝지었는데 EXIF가 바로잡아 줬다. **사람 기억보다 EXIF가 정확하다.**
 - 한국에서는 "익서스(IXUS)"로 많이 부르므로 **캐논 똑딱이는 IXUS 이름을 대표 이름**으로 쓰고, IXY·PowerShot SD는 별칭으로 둔다. EXIF로 확인되지 않은 IXY 이름은 넣지 않는다.
 
 **Commons 분류에 다른 카메라 사진이 섞여 있다**
-- 예) 앞선 검증에서 IXUS 30 분류에 IXY DIGITAL 40(다른 카메라로 추정)이 섞여 있었다. 루믹스 FX01 분류에는 FX07이 함께 집계됐다.
+- 예) IXUS 110 IS 분류에 IXY DIGITAL 110 IS(내부 번호가 다른 별개 기종)가, G9 분류에 니콘 P6000이 섞여 있었다. 루믹스 FX01 분류에는 FX07이 함께 집계됐다.
+- (처음엔 IXUS 30 분류의 IXY DIGITAL 40을 다른 카메라로 추정했는데, 내부 번호로 확인해 보니 같은 카메라였다.)
 - 그래서 분류만 믿지 않고 **EXIF 모델명이 그 기종 목록에 있는 사진만** 가져온다. (ARCHITECTURE.md 3.3)
 
 **EXIF 모델명 표기가 브랜드마다 이상하다**
@@ -40,6 +42,30 @@
 - 니콘: COOLPIX 3200은 `E3200`, COOLPIX S1은 `S1`
 - 코닥: `KODAK EASYSHARE C713 ZOOM DIGITAL CAMERA`
 - 실제 표본에서 나온 값을 정규화(ERD.md 4장)해서 `camera_exif_model`에 넣는다. 사진이 없는 기종은 실제 사진을 받은 뒤 확인해서 넣는다.
+
+**캐논 내부 번호 (Canon Model ID)** — 2026-11-19 확인
+- 캐논은 EXIF의 제조사 전용 영역(MakerNote 0x0010)에 기종 번호를 남긴다. 나라별 이름이 달라도 같은 기종이면 번호가 같다.
+- Commons 사진 약 60장의 파일 앞부분만 받아 확인했다. 같은 기종은 이름이 2~3개여도 번호가 모두 같았고, 다른 기종끼리는 모두 달랐다.
+
+| 기종 | 같은 번호로 확인된 EXIF 이름 | 번호 |
+|---|---|---|
+| IXUS 30 | DIGITAL IXUS 30, PowerShot SD200, IXY DIGITAL 40 | `0x01550000` |
+| IXUS 40 | DIGITAL IXUS 40, PowerShot SD300, IXY DIGITAL 50 | `0x01540000` |
+| IXUS 55 | DIGITAL IXUS 55, PowerShot SD450, IXY DIGITAL 60 | `0x01810000` |
+| IXUS 60 | DIGITAL IXUS 60, PowerShot SD600, IXY DIGITAL 70 | `0x01970000` |
+| IXUS 70 | DIGITAL IXUS 70, PowerShot SD1000, IXY DIGITAL 10 | `0x02160000` |
+| IXUS 75 | DIGITAL IXUS 75, PowerShot SD750, IXY DIGITAL 90 | `0x02150000` |
+| IXUS 110 IS | DIGITAL IXUS 110 IS, PowerShot SD960 IS, IXY DIGITAL 510 IS | `0x02570000` |
+| PowerShot G9 | PowerShot G9 | `0x02230000` |
+| PowerShot G11 | PowerShot G11 | `0x02700000` |
+
+- **이름만 보고 짝지으면 틀린다**: IXY DIGITAL 110 IS는 `0x02640000`, IXY DIGITAL 30은 `0x01230000`으로 IXUS 110 IS·IXUS 30과 다른 기종이다.
+- 편집 프로그램을 거친 사진은 MakerNote가 지워져 번호가 없다. (표본의 약 15%, 라이트룸으로 내보낸 업로드 사진도 없었음)
+- 업로드 원본에서 GPS를 지워도(`GpsRemover`) 번호는 남는다.
+- 다른 제조사 확인 결과: 니콘·후지필름·소니·카시오·리코·코닥은 기종 번호로 쓸 값이 없었다. 올림푸스·삼성은 모델명 칸에 나라별 이름을 같이 적는다.
+- Commons 분류 21개(약 4만 장)의 EXIF 모델명을 전부 세어 봤는데, 캐논 외에는 나라별로 다른 이름이 없었다. 섞인 건 잘못 분류된 다른 카메라와 편집 프로그램이 바꾼 이름(`PowerShot G9`, `MJU 700`, `DMC.FX01` 등)뿐이었다.
+- 루믹스 FX01·FX07은 분류가 따로 있어 이번에 확인하지 못했다. 이 기종을 넣을 때 확인한다.
+- 이 값들은 `V5__maker_model_id.sql`에 있다. (`camera_maker_model`, ERD 3.4.2)
 
 **Commons 분류 이름 규칙도 브랜드마다 다르다**
 - 소니: `Sony DSC-T1` ("Cyber-shot"을 붙이면 없음)
@@ -167,11 +193,11 @@
 - [x] 성공 기준 → Commons 기종 26개만 20장 이상
 - [ ] 산요 작티 모델명 확인 (J1, DMX-C40이 국내에서 부르는 정확한 모델인지)
 - [ ] 원래 해상도 "확인 필요" 기종을 제조사 자료로 확인
-- [ ] 캐논 익서스 30·40의 일본 이름(IXY) 확인. 확인 안 되면 별칭에 넣지 않음
+- [x] 캐논 익서스 30·40의 일본 이름(IXY) 확인 → IXY 40, IXY 50 (내부 번호로 확인, V5에 추가)
 - [ ] 직접 수집 기종 4개의 작례 모을 방법 정하기 (지인, 디카 커뮤니티, 인스타 DM 요청 등)
 - [x] 시드 데이터 (2026-11-17): Commons로 채울 수 있는 **26개**를 `V2__seed_cameras.sql`로 넣음
   - 원본: `backend/scripts/gen_seed_cameras.py` (데이터 수정은 이 파일에서 하고 SQL을 다시 생성)
-  - EXIF 값은 Commons 표본 100장에서 실제로 나온 값만 넣음 (`poc/seed_exif_pairs.json`). 확인 안 된 값은 제외: IXUS 110 분류의 `CANON IXY DIGITAL 510 IS`, 제조사가 덮어써진 `OLYMPUS CORPORATION` + G11, 깨진 NV3 값
+  - EXIF 값은 Commons 표본 100장에서 실제로 나온 값만 넣음 (`poc/seed_exif_pairs.json`). 확인 안 된 값은 제외: IXUS 110 분류의 `CANON IXY DIGITAL 510 IS`(→ V5에서 내부 번호로 확인해 추가), 제조사가 덮어써진 `OLYMPUS CORPORATION` + G11, 깨진 NV3 값
   - 출시연도는 비워 둠 (아직 조사 안 함)
 - [ ] 나머지 4개(익서스 230 HS·310 HS, 작티 2개)는 모델명·EXIF 확인 후 다음 마이그레이션으로 추가. 산요 브랜드도 그때 추가
 - [ ] 출시연도 조사 후 채우기

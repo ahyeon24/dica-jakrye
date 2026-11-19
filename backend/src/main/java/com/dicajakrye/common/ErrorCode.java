@@ -21,6 +21,8 @@ public enum ErrorCode {
     CSRF_TOKEN_INVALID(HttpStatus.FORBIDDEN, "요청을 확인하지 못했어요. 새로고침 후 다시 시도해 주세요."),
     NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "이미 쓰고 있는 닉네임이에요."),
     ALREADY_REPORTED(HttpStatus.CONFLICT, "이미 신고한 작례예요."),
+    EXIF_MODEL_ALREADY_MAPPED(HttpStatus.CONFLICT, "이 EXIF 모델명은 이미 다른 기종에 연결돼 있어요."),
+    CAMERA_ALREADY_EXISTS(HttpStatus.CONFLICT, "같은 이름이나 주소의 기종이 이미 있어요."),
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "브랜드를 찾을 수 없어요."),
     CAMERA_NOT_FOUND(HttpStatus.NOT_FOUND, "기종을 찾을 수 없어요."),
     PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "작례를 찾을 수 없어요."),

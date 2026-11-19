@@ -105,6 +105,24 @@ EXIF의 제조사와 모델명 조합을 기종에 연결한다. 검색 별칭�
 
 - UNIQUE (exif_make, exif_model)
 - 같은 기종이 나라별로 다른 EXIF 모델명을 쓰면(IXY / IXUS / PowerShot) 행을 여러 개 만든다.
+- 나라별 이름은 짐작으로 넣지 않는다. 캐논 내부 번호(3.4.2)나 실제 사진으로 확인한 이름만 넣는다. (IXY DIGITAL 110 IS는 IXUS 110 IS와 다른 기종이다)
+
+### 3.4.2 `camera_maker_model` 제조사 내부 기종 번호 (V5)
+
+EXIF 모델명으로 기종을 못 찾았을 때 한 번 더 찾는 데 쓴다. 캐논은 MakerNote에 **Canon Model ID**를 남기는데, 나라별 이름(IXUS·IXY·PowerShot SD)이 달라도 같은 기종이면 번호가 같다. (CAMERAS.md 2장, 2026-11-19 Commons 표본으로 확인)
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|---|---|---|---|
+| id | bigint | PK | |
+| camera_id | bigint | NOT NULL, FK → camera | |
+| exif_make | varchar(100) | NOT NULL | 정규화된 EXIF Make. 지금은 `canon`만 |
+| maker_model_id | bigint | NOT NULL | 캐논: MakerNote 0x0010 (예: IXUS 30 = `0x01550000`) |
+| created_at | timestamptz | NOT NULL | |
+
+- UNIQUE (exif_make, maker_model_id)
+- 다른 제조사(니콘·후지필름·소니·카시오·리코·코닥·올림푸스·삼성)는 쓸 만한 번호가 없어 넣지 않는다. 올림푸스·삼성은 EXIF 모델명 한 칸에 나라별 이름을 같이 적어서(`u700,S700`, `<KENOX S630 / Samsung S630>`) 필요 없다.
+- 편집 프로그램(라이트룸 등)을 거친 사진은 MakerNote가 없어서 이 방법을 못 쓴다.
+- 미분류 연결 때, 그 묶음의 사진이 번호 하나만 가지고 있으면 그 번호도 이 테이블에 등록한다.
 
 ### 3.4.1 `camera_source_category` Commons 분류 연결
 
@@ -155,6 +173,7 @@ EXIF의 제조사와 모델명 조합을 기종에 연결한다. 검색 별칭�
 | exif_model_raw | varchar(100) | | EXIF Model 원문 |
 | exif_make | varchar(100) | | 정규화 값. 미분류 연결에 사용 |
 | exif_model | varchar(100) | | 정규화 값. 미분류 연결에 사용 |
+| maker_model_id | bigint | | 제조사 내부 기종 번호 (캐논 Model ID, 3.4.2). 업로드할 때 읽는다. 없으면 null |
 | flash_fired | boolean | | 플래시 사용 여부. **null = 알 수 없음** |
 | taken_at | timestamp | | EXIF 촬영 시각 (시간대 없음) |
 | f_number | numeric(4,1) | | 조리개 (2.8) |
@@ -277,9 +296,9 @@ EXIF 모델명 안에 제조사 이름이 들어 있기도 하고 없기도 해�
 
 | 상황 | 테이블 변화 |
 |---|---|
-| 업로드 (등록된 기종) | `photo` 1행 (camera_id 채움) |
+| 업로드 (등록된 기종) | `photo` 1행 (camera_id 채움). 기종은 `camera_exif_model`로 찾고, 못 찾으면 `camera_maker_model`(캐논 내부 번호)로 한 번 더 찾는다 |
 | 업로드 (미등록 기종) | `photo` 1행 (camera_id null) |
-| 미분류 연결 | `camera_exif_model` 1행 추가 → 같은 (exif_make, exif_model)의 미분류 `photo.camera_id` 일괄 갱신 |
+| 미분류 연결 | (새 기종이면 `camera` + `camera_alias` 추가) → `camera_exif_model` 1행 추가 → 묶음의 캐논 내부 번호가 하나면 `camera_maker_model` 1행 추가 → 같은 (exif_make, exif_model) 또는 같은 내부 번호의 미분류 `photo.camera_id`·`is_original_size` 일괄 갱신 |
 | Commons 수집 | `photo` + `commons_meta` 1행씩, R2에 썸네일·보기용 저장. `commons_page_id`가 이미 있으면 건너뜀. 기종 끝날 때마다 `camera.commons_collected_at` 갱신 |
 | Commons 정리 | `last_checked_at` 갱신, Commons에서 사라진 파일은 `photo.deleted_at` 채움 + R2 파일 삭제 |
 | 신고 접수 (초상권·도용) | `report` 1행 + `photo.hidden_at` 채움 (임시조치) |

@@ -66,6 +66,7 @@
 - Commons 분류 21개(약 4만 장)의 EXIF 모델명을 전부 세어 봤는데, 캐논 외에는 나라별로 다른 이름이 없었다. 섞인 건 잘못 분류된 다른 카메라와 편집 프로그램이 바꾼 이름(`PowerShot G9`, `MJU 700`, `DMC.FX01` 등)뿐이었다.
 - 루믹스 FX01·FX07은 분류가 따로 있어 이번에 확인하지 못했다. 이 기종을 넣을 때 확인한다.
 - 이 값들은 `V5__maker_model_id.sql`에 있다. (`camera_maker_model`, ERD 3.4.2)
+- 확인에 쓴 스크립트와 방법: `poc/maker_model_id/README.md`
 
 **Commons 분류 이름 규칙도 브랜드마다 다르다**
 - 소니: `Sony DSC-T1` ("Cyber-shot"을 붙이면 없음)

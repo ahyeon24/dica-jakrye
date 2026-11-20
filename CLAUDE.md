@@ -23,6 +23,7 @@
   - 로컬 로그인 키는 `backend/.env` (Git 제외, `.env.example` 참고)
   - 테스트의 쓰기 요청은 `TestCsrf.csrf()`를 쓴다. spring-security-test의 `csrf()`는 앱의 CSRF 저장소를 세션 방식으로 바꿔 다른 테스트를 깨뜨린다.
 - `poc/`: 외부 데이터 검증 스크립트 (Commons, 네이버 데이터랩). `poc/.env`에 키가 있다
+  - `poc/maker_model_id/`: 캐논 나라별 이름(IXUS·IXY·PowerShot SD)이 같은 기종인지 내부 번호로 확인. 캐논 기종·별칭을 추가할 때 쓴다
 - `frontend/`: Next.js 16.4 (App Router, **Cache Components 켬**), TypeScript, Tailwind CSS 4
   - **이 Next.js는 예전 버전과 API가 다르다. 코드를 쓰기 전에 `frontend/node_modules/next/dist/docs/`의 해당 문서를 읽는다.** (`frontend/AGENTS.md`)
   - 백엔드 데이터를 읽는 서버 컴포넌트는 `<Suspense>` 안에 둔다. `params`·`searchParams`는 Promise다.
@@ -52,7 +53,8 @@ cd frontend && npx tsc --noEmit && npm run lint
 
 **기종 데이터**
 - `V2__seed_cameras.sql`은 `backend/scripts/gen_seed_cameras.py`가 만든다. **SQL을 직접 고치지 않는다.** 스크립트를 고치고 다시 생성한다.
-- EXIF 모델명은 실제 사진(Commons 표본 등)에서 확인된 값만 넣는다. 짐작으로 나라별 이름을 짝짓지 않는다. (캐논 IXUS↔IXY 대응을 짐작했다가 틀린 적 있음)
+- EXIF 모델명은 실제 사진(Commons 표본 등)에서 확인된 값만 넣는다. 짐작으로 나라별 이름을 짝짓지 않는다. (캐논 IXUS↔IXY 대응을 짐작했다가 틀린 적 있음. IXY DIGITAL 110 IS는 IXUS 110 IS와 다른 기종)
+- 캐논은 내부 번호(Canon Model ID)로 확인한다: `poc/maker_model_id/README.md`. 확인한 번호는 새 마이그레이션으로 `camera_maker_model`에 넣는다.
 
 **정규화**
 - 별칭·EXIF 정규화 규칙은 `TextNormalizer.java`와 `gen_seed_cameras.py`가 **똑같아야** 한다. 한쪽을 바꾸면 다른 쪽도 바꾸고, 두 쪽의 같은 예시 테스트가 모두 통과해야 한다.
@@ -75,7 +77,14 @@ cd frontend && npx tsc --noEmit && npm run lint
 
 ## 작업 방식
 
-- push하면 CI(`.github/workflows/ci.yml`)가 백엔드 테스트와 프론트 검사·빌드를 돌린다. push한 뒤 결과를 확인한다. (`gh run list`, `gh run watch`)
+- **main에 바로 push하지 않는다.** 기능마다 브랜치(`feat/…`, `fix/…`, `chore/…`, `docs/…`)를 만들고 PR로 합친다.
+  1. 브랜치에서 작업하고 커밋 (커밋 메시지는 먼저 보여 주고 확인받는다)
+  2. push하고 PR을 연다. 본문에 무엇을 왜 바꿨는지, 어떻게 확인했는지 적는다. 관련 이슈가 있으면 `Closes #번호`
+  3. PR의 CI(백엔드 테스트, 프론트 검사·빌드)가 **통과한 뒤에만** 합친다. 실패하면 고쳐서 다시 push
+  4. 합치는 방식은 squash, 합친 뒤 브랜치는 지운다 (`gh pr merge --squash --delete-branch`)
+  - 비공개 저장소 무료 요금제라 GitHub 브랜치 보호 규칙을 쓸 수 없다. 규칙이 막아 주지 않으므로 이 순서를 직접 지킨다.
+- 할 일은 GitHub Issues에 둔다. 대화나 문서 체크박스에만 남기지 않는다.
+- 조사·검증에 쓴 스크립트는 임시 폴더에 두지 않고 `poc/`에 남긴다. 문서에 "확인했다"고 적으면 다시 돌려 볼 수 있어야 한다.
 - 응답과 문서는 한국어로 쓴다.
 - 기능을 만들면 테스트를 함께 만들고, 실제로 돌려서 확인한 뒤 결과를 알려 준다.
 - 외부 서비스의 정책·요금·API는 기억으로 단정하지 말고 공식 문서나 실제 호출로 확인한다. (Flickr 키 발급 조건, 네이버 데이터랩 이관을 기억으로 안내했다가 틀린 적 있음)

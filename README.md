@@ -3,6 +3,18 @@
 **디카 사기 전에, 그 기종으로 진짜 찍은 작례를 한국어로 모아 보는 사이트.**
 2000년대~2010년대 초 똑딱이 디카를 기종별로 정리하고, 그 카메라로 찍은 사진을 모아 보여준다.
 
+## 화면
+
+| 기종 페이지 (플래시·원본 크기 필터) | 휴대폰 화면 |
+|---|---|
+| <img src="docs/screenshots/camera.jpg" width="560"> | <img src="docs/screenshots/camera-mobile.jpg" width="220"> |
+
+| 작례 상세 (촬영 정보, 작가·라이선스 표시) | 홈 (나라별 이름으로 기종 검색) |
+|---|---|
+| <img src="docs/screenshots/photo.jpg" width="560"> | <img src="docs/screenshots/home.jpg" width="320"> |
+
+화면 속 사진은 Wikimedia Commons의 자유 라이선스 작례이고, 사이트에서는 사진마다 작가와 라이선스를 표시한다. 로컬 개발 환경에서 찍은 화면이다.
+
 ## 왜 만들었나
 
 - 빈티지 디카 작례는 인스타·블로그에 흩어져 있고, EXIF가 지워져 진짜 그 기종으로 찍었는지 알 수 없다.

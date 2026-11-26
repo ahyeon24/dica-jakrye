@@ -1,6 +1,35 @@
-# dica-jakrye
+# 디카 작례 (dica-jakrye)
 
-빈티지 디카 작례 사이트. 기종별로 그 카메라로 찍은 작례를 모아 보여준다.
+**디카 사기 전에, 그 기종으로 진짜 찍은 작례를 한국어로 모아 보는 사이트.**
+2000년대~2010년대 초 똑딱이 디카를 기종별로 정리하고, 그 카메라로 찍은 사진을 모아 보여준다.
+
+## 왜 만들었나
+
+- 빈티지 디카 작례는 인스타·블로그에 흩어져 있고, EXIF가 지워져 진짜 그 기종으로 찍었는지 알 수 없다.
+- 같은 카메라도 나라마다 이름이 달라(IXUS / IXY / PowerShot SD) 검색이 잘 안 된다.
+
+## 주요 기능
+
+- 기종 검색: 별칭과 나라별 이름으로도 찾는다. 캐논은 내부 모델 번호로 같은 기종인지 확인한다.
+- 기종 페이지와 작례 상세: 촬영 정보, 올린 사람 또는 출처·라이선스를 함께 보여준다.
+- 작례 올리기: 구글·카카오 로그인 후 업로드하면 EXIF로 기종을 자동 인식하고, 위치 정보(GPS)는 지운 뒤 저장한다.
+- 초기 작례 수집: Wikimedia Commons에서 기종별 작례를 이용 규칙(요청 간격, User-Agent)을 지키며 모은다.
+- 신고와 관리자 처리: 부적절한 작례 신고, 관리자 삭제, 미분류 작례 연결.
+
+## 만든 방식
+
+코드보다 문서를 먼저 썼다. 기능 범위, 구조, DB, API, 보안 체크리스트를 `docs/`에 확정하고,
+외부 데이터(Commons, 네이버 데이터랩)는 `poc/`의 스크립트로 먼저 검증한 뒤 구현했다.
+수요가 확인되지 않은 기능(인기 기종 순위)은 조사 결과와 함께 [LATER.md](docs/LATER.md)로 미뤘다.
+
+| 문서 | 내용 |
+|---|---|
+| [PRD](docs/PRD.md) | 문제 정의, 기능 범위, MVP 포함·제외 |
+| [ARCHITECTURE](docs/ARCHITECTURE.md) | 구성, 배치 설계, 확장 체크리스트 |
+| [ERD](docs/ERD.md) · [API](docs/API.md) | 테이블과 API 명세 |
+| [SECURITY](docs/SECURITY.md) | 기능별 보안 체크리스트 |
+
+**기술**: Next.js 16 · TypeScript · Tailwind CSS 4 / Spring Boot 4.1 · Java 21 · PostgreSQL 17 · Flyway · Spring Security(OAuth2) / Cloudflare R2 / GitHub Actions CI · Testcontainers
 
 ## 폴더
 
